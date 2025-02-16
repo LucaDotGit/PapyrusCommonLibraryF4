@@ -1,0 +1,6 @@
+[submodule "extern/CommonLibF4"]
+	path = extern/CommonLibF4
+	url = https://github.com/LucaDotGit/CommonLibF4
+[submodule "extern/boost-regex"]
+	path = extern/boost-regex
+	url = https://github.com/boostorg/regex

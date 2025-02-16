@@ -1,0 +1,106 @@
+{
+	"version": 9,
+	"cmakeMinimumRequired": {
+		"major": 3,
+		"minor": 30
+	},
+	"configurePresets": [
+		{
+			"name": "common",
+			"hidden": true,
+			"errors": {
+				"deprecated": true
+			},
+			"warnings": {
+				"deprecated": true,
+				"dev": true
+			},
+			"cacheVariables": {
+				"CMAKE_CONFIGURATION_TYPES": "Debug;Release"
+			}
+		},
+		{
+			"name": "packaging-vcpkg",
+			"hidden": true,
+			"toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+		},
+		{
+			"name": "buildtype-debug-msvc",
+			"hidden": true,
+			"cacheVariables": {
+				"CMAKE_BUILD_TYPE": "Debug",
+				"VCPKG_TARGET_TRIPLET": "x64-windows-static-md",
+				"VCPKG_HOST_TRIPLET": "x64-windows-static-md",
+				"CMAKE_MSVC_RUNTIME_LIBRARY": "MultiThreadedDebugDLL"
+			}
+		},
+		{
+			"name": "buildtype-release-msvc",
+			"hidden": true,
+			"cacheVariables": {
+				"CMAKE_BUILD_TYPE": "Release",
+				"VCPKG_TARGET_TRIPLET": "x64-windows-static-md-release",
+				"VCPKG_HOST_TRIPLET": "x64-windows-static-md-release",
+				"CMAKE_MSVC_RUNTIME_LIBRARY": "MultiThreadedDLL"
+			}
+		},
+		{
+			"name": "x64",
+			"hidden": true,
+			"architecture": {
+				"value": "x64",
+				"strategy": "external"
+			}
+		},
+		{
+			"name": "generator-msvc",
+			"inherits": "x64",
+			"hidden": true,
+			"generator": "Visual Studio 17 2022"
+		},
+		{
+			"name": "compiler-msvc",
+			"hidden": true,
+			"vendor": {
+				"microsoft.com/VisualStudioSettings/CMake/1.0": {
+					"intelliSenseMode": "windows-msvc-x64",
+					"enableMicrosoftCodeAnalysis": true
+				}
+			}
+		},
+		{
+			"name": "build-debug-msvc",
+			"inherits": [
+				"common",
+				"packaging-vcpkg",
+				"buildtype-debug-msvc",
+				"generator-msvc",
+				"compiler-msvc"
+			],
+			"binaryDir": "${sourceDir}/build/debug-msvc"
+		},
+		{
+			"name": "build-release-msvc",
+			"inherits": [
+				"common",
+				"packaging-vcpkg",
+				"buildtype-release-msvc",
+				"generator-msvc",
+				"compiler-msvc"
+			],
+			"binaryDir": "${sourceDir}/build/release-msvc"
+		}
+	],
+	"buildPresets": [
+		{
+			"name": "debug-msvc",
+			"configurePreset": "build-debug-msvc",
+			"configuration": "Debug"
+		},
+		{
+			"name": "release-msvc",
+			"configurePreset": "build-release-msvc",
+			"configuration": "Release"
+		}
+	]
+}

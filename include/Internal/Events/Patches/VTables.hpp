@@ -1,0 +1,71 @@
+#pragma once
+
+namespace Internal::Events::VTables
+{
+	inline constexpr auto BasicEventHandler_BGSLocationLoadedEvent = RE::GameScript::BasicEventHandler::VTABLE[0];
+	inline constexpr auto BasicEventHandler_BGSOnPlayerCompanionDismiss = RE::GameScript::BasicEventHandler::VTABLE[1];
+	inline constexpr auto BasicEventHandler_BGSOnPlayerEnterVertibirdEvent = RE::GameScript::BasicEventHandler::VTABLE[2];
+	inline constexpr auto BasicEventHandler_BGSOnPlayerFallLongDistances = RE::GameScript::BasicEventHandler::VTABLE[3];
+	inline constexpr auto BasicEventHandler_BGSOnPlayerFireWeaponEvent = RE::GameScript::BasicEventHandler::VTABLE[4];
+	inline constexpr auto BasicEventHandler_BGSOnPlayerHealTeammateEvent = RE::GameScript::BasicEventHandler::VTABLE[5];
+	inline constexpr auto BasicEventHandler_BGSOnPlayerModArmorWeaponEvent = RE::GameScript::BasicEventHandler::VTABLE[6];
+	inline constexpr auto BasicEventHandler_BGSOnPlayerCreateRobotEvent = RE::GameScript::BasicEventHandler::VTABLE[7];
+	inline constexpr auto BasicEventHandler_BGSOnPlayerModRobotEvent = RE::GameScript::BasicEventHandler::VTABLE[8];
+	inline constexpr auto BasicEventHandler_BGSOnPlayerSwimmingEvent = RE::GameScript::BasicEventHandler::VTABLE[9];
+	inline constexpr auto BasicEventHandler_BGSOnPlayerUseWorkBenchEvent = RE::GameScript::BasicEventHandler::VTABLE[10];
+	inline constexpr auto BasicEventHandler_BGSOnSpeechChallengeAvailable = RE::GameScript::BasicEventHandler::VTABLE[11];
+	inline constexpr auto BasicEventHandler_PlayerDifficultySettingChanged_Event = RE::GameScript::BasicEventHandler::VTABLE[12];
+	inline constexpr auto BasicEventHandler_RadioManager_PipboyTransmitterDetectionEvent = RE::GameScript::BasicEventHandler::VTABLE[13];
+	inline constexpr auto BasicEventHandler_TESActiveEffectApplyRemoveEvent = RE::GameScript::BasicEventHandler::VTABLE[14];
+	inline constexpr auto BasicEventHandler_TESActivateEvent = RE::GameScript::BasicEventHandler::VTABLE[15];
+	inline constexpr auto BasicEventHandler_TESActorLocationChangeEvent = RE::GameScript::BasicEventHandler::VTABLE[16];
+	inline constexpr auto BasicEventHandler_TESBookReadEvent = RE::GameScript::BasicEventHandler::VTABLE[17];
+	inline constexpr auto BasicEventHandler_TESCellAttachDetachEvent = RE::GameScript::BasicEventHandler::VTABLE[18];
+	inline constexpr auto BasicEventHandler_TESCellFullyLoadedEvent = RE::GameScript::BasicEventHandler::VTABLE[19];
+	inline constexpr auto BasicEventHandler_TESCombatEvent = RE::GameScript::BasicEventHandler::VTABLE[20];
+	inline constexpr auto BasicEventHandler_TESCommandModeCompleteCommandEvent = RE::GameScript::BasicEventHandler::VTABLE[21];
+	inline constexpr auto BasicEventHandler_TESCommandModeEnterEvent = RE::GameScript::BasicEventHandler::VTABLE[22];
+	inline constexpr auto BasicEventHandler_TESCommandModeExitEvent = RE::GameScript::BasicEventHandler::VTABLE[23];
+	inline constexpr auto BasicEventHandler_TESCommandModeGiveCommandEvent = RE::GameScript::BasicEventHandler::VTABLE[24];
+	inline constexpr auto BasicEventHandler_TESDeathEvent = RE::GameScript::BasicEventHandler::VTABLE[25];
+	inline constexpr auto BasicEventHandler_TESDeferredKillEvent = RE::GameScript::BasicEventHandler::VTABLE[26];
+	inline constexpr auto BasicEventHandler_TESDestructionStageChangedEvent = RE::GameScript::BasicEventHandler::VTABLE[27];
+	inline constexpr auto BasicEventHandler_TESEnterBleedoutEvent = RE::GameScript::BasicEventHandler::VTABLE[28];
+	inline constexpr auto BasicEventHandler_TESEnterSneakingEvent = RE::GameScript::BasicEventHandler::VTABLE[29];
+	inline constexpr auto BasicEventHandler_TESEscortWaitStartEvent = RE::GameScript::BasicEventHandler::VTABLE[30];
+	inline constexpr auto BasicEventHandler_TESEscortWaitStopEvent = RE::GameScript::BasicEventHandler::VTABLE[31];
+	inline constexpr auto BasicEventHandler_TESExitFurnitureEvent = RE::GameScript::BasicEventHandler::VTABLE[32];
+	inline constexpr auto BasicEventHandler_TESFurnitureEvent = RE::GameScript::BasicEventHandler::VTABLE[33];
+	inline constexpr auto BasicEventHandler_TESGrabReleaseEvent = RE::GameScript::BasicEventHandler::VTABLE[34];
+	inline constexpr auto BasicEventHandler_TESConsciousnessEvent = RE::GameScript::BasicEventHandler::VTABLE[35];
+	inline constexpr auto BasicEventHandler_TESLimbCrippleEvent = RE::GameScript::BasicEventHandler::VTABLE[36];
+	inline constexpr auto BasicEventHandler_TESLoadGameEvent = RE::GameScript::BasicEventHandler::VTABLE[37];
+	inline constexpr auto BasicEventHandler_TESLocationClearedEvent = RE::GameScript::BasicEventHandler::VTABLE[38];
+	inline constexpr auto BasicEventHandler_TESLockChangedEvent = RE::GameScript::BasicEventHandler::VTABLE[39];
+	inline constexpr auto BasicEventHandler_TESObjectLoadedEvent = RE::GameScript::BasicEventHandler::VTABLE[40];
+	inline constexpr auto BasicEventHandler_TESObjectREFRTranslationEvent = RE::GameScript::BasicEventHandler::VTABLE[41];
+	inline constexpr auto BasicEventHandler_TESOnPCDialogueTargetEvent = RE::GameScript::BasicEventHandler::VTABLE[42];
+	inline constexpr auto BasicEventHandler_TESOpenCloseEvent = RE::GameScript::BasicEventHandler::VTABLE[43];
+	inline constexpr auto BasicEventHandler_TESPickpocketFailedEvent = RE::GameScript::BasicEventHandler::VTABLE[44];
+	inline constexpr auto BasicEventHandler_TESQuestInitEvent = RE::GameScript::BasicEventHandler::VTABLE[45];
+	inline constexpr auto BasicEventHandler_TESResetEvent = RE::GameScript::BasicEventHandler::VTABLE[46];
+	inline constexpr auto BasicEventHandler_TESSellEvent = RE::GameScript::BasicEventHandler::VTABLE[47];
+	inline constexpr auto BasicEventHandler_TESSpellCastEvent = RE::GameScript::BasicEventHandler::VTABLE[48];
+	inline constexpr auto BasicEventHandler_TESSwitchRaceCompleteEvent = RE::GameScript::BasicEventHandler::VTABLE[49];
+	inline constexpr auto BasicEventHandler_TESTrapHitEvent = RE::GameScript::BasicEventHandler::VTABLE[50];
+	inline constexpr auto BasicEventHandler_TESTriggerEnterEvent = RE::GameScript::BasicEventHandler::VTABLE[51];
+	inline constexpr auto BasicEventHandler_TESTriggerLeaveEvent = RE::GameScript::BasicEventHandler::VTABLE[52];
+	inline constexpr auto BasicEventHandler_Workshop_ItemDestroyedEvent = RE::GameScript::BasicEventHandler::VTABLE[53];
+	inline constexpr auto BasicEventHandler_Workshop_ItemMovedEvent = RE::GameScript::BasicEventHandler::VTABLE[54];
+	inline constexpr auto BasicEventHandler_Workshop_ItemPlacedEvent = RE::GameScript::BasicEventHandler::VTABLE[55];
+	inline constexpr auto BasicEventHandler_Workshop_ItemRepairedEvent = RE::GameScript::BasicEventHandler::VTABLE[56];
+	inline constexpr auto BasicEventHandler_Workshop_ItemGrabbedEvent = RE::GameScript::BasicEventHandler::VTABLE[57];
+	inline constexpr auto BasicEventHandler_Workshop_PowerOffEvent = RE::GameScript::BasicEventHandler::VTABLE[58];
+	inline constexpr auto BasicEventHandler_Workshop_PowerOnEvent = RE::GameScript::BasicEventHandler::VTABLE[59];
+	inline constexpr auto BasicEventHandler_WorkshopNPCTransferEvent = RE::GameScript::BasicEventHandler::VTABLE[60];
+	inline constexpr auto BasicEventHandler_Workshop_WorkshopModeEvent = RE::GameScript::BasicEventHandler::VTABLE[61];
+
+	inline constexpr auto CombatEventHandler_TESHitEvent = RE::GameScript::CombatEventHandler::VTABLE[0];
+	inline constexpr auto CombatEventHandler_TESMagicEffectApplyEvent = RE::GameScript::CombatEventHandler::VTABLE[1];
+	inline constexpr auto CombatEventHandler_BGSRadiationDamageEvent = RE::GameScript::CombatEventHandler::VTABLE[2];
+}

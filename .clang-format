@@ -1,0 +1,30 @@
+BasedOnStyle: LLVM
+LineEnding: LF
+UseTab: Always
+IndentWidth: 4
+TabWidth: 4
+ColumnLimit: 0
+AccessModifierOffset: -4
+NamespaceIndentation: All
+FixNamespaceComments: false
+LambdaBodyIndentation: OuterScope
+AlignAfterOpenBracket: DontAlign
+PointerAlignment: Left
+AllowShortIfStatementsOnASingleLine: Never
+AllowAllArgumentsOnNextLine: true
+AllowAllParametersOfDeclarationOnNextLine: false
+BreakConstructorInitializers: AfterColon
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterExternBlock: true
+  AfterNamespace: true
+  AfterFunction: true
+  AfterClass: true
+  AfterStruct: true
+  AfterEnum: true
+  AfterUnion: true
+  BeforeElse: true
+  BeforeCatch: true
+  IndentBraces: false
+Cpp11BracedListStyle: false
+IndentCaseLabels: true
