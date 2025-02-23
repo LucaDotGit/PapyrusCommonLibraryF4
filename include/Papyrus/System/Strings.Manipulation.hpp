@@ -382,6 +382,8 @@ namespace System::Strings::Manipulation
 		auto args = fmt::dynamic_format_arg_store<fmt::format_context>();
 		args.reserve(a_args.size(), 0);
 
+		using raw_type_t = RE::BSScript::TypeInfo::RawType;
+
 		for (const auto* arg : a_args) {
 			if (!arg) {
 				args.push_back(::Internal::Converter::NONE);
@@ -389,22 +391,22 @@ namespace System::Strings::Manipulation
 			}
 
 			switch (arg->GetType().GetRawType()) {
-				case RE::BSScript::TypeInfo::RawType::kBool: {
+				case raw_type_t::kBool: {
 					const auto value = RE::BSScript::get<bool>(*arg);
 					args.push_back(value);
 					break;
 				}
-				case RE::BSScript::TypeInfo::RawType::kInt: {
+				case raw_type_t::kInt: {
 					const auto value = RE::BSScript::get<std::int32_t>(*arg);
 					args.push_back(value);
 					break;
 				}
-				case RE::BSScript::TypeInfo::RawType::kFloat: {
+				case raw_type_t::kFloat: {
 					const auto value = RE::BSScript::get<float>(*arg);
 					args.push_back(value);
 					break;
 				}
-				case RE::BSScript::TypeInfo::RawType::kString: {
+				case raw_type_t::kString: {
 					const auto value = RE::BSScript::detail::UnpackVariable<std::string_view>(*arg);
 					args.push_back(value);
 					break;

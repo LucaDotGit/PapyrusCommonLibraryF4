@@ -34,11 +34,11 @@ namespace System::Operator
 		return a_var && a_var->is<RE::BSScript::Array>();
 	}
 
-	static std::int32_t Compare(std::monostate,
+	static bool Equals(std::monostate,
 		const RE::BSScript::Variable* a_left,
 		const RE::BSScript::Variable* a_right)
 	{
-		return ::Internal::Comparer::Compare(a_left, a_right)._Value;
+		return ::Internal::Comparer::Equals(a_left, a_right);
 	}
 
 	static bool RefEquals(std::monostate,
@@ -53,6 +53,13 @@ namespace System::Operator
 		const RE::BSScript::Variable* a_right)
 	{
 		return ::Internal::Comparer::TypeEquals(a_left, a_right);
+	}
+
+	static std::int32_t Compare(std::monostate,
+		const RE::BSScript::Variable* a_left,
+		const RE::BSScript::Variable* a_right)
+	{
+		return ::Internal::Comparer::Compare(a_left, a_right)._Value;
 	}
 
 	static RE::BSScript::TypeInfo::RawType GetRawType(std::monostate,
@@ -138,9 +145,10 @@ namespace System::Operator
 		BIND_METHOD_SAFE(a_vm, SCRIPT_NAME, IsNone);
 		BIND_METHOD_SAFE(a_vm, SCRIPT_NAME, IsStruct);
 		BIND_METHOD_SAFE(a_vm, SCRIPT_NAME, IsArray);
-		BIND_METHOD_SAFE(a_vm, SCRIPT_NAME, Compare);
+		BIND_METHOD_SAFE(a_vm, SCRIPT_NAME, Equals);
 		BIND_METHOD_SAFE(a_vm, SCRIPT_NAME, RefEquals);
 		BIND_METHOD_SAFE(a_vm, SCRIPT_NAME, TypeEquals);
+		BIND_METHOD_SAFE(a_vm, SCRIPT_NAME, Compare);
 		BIND_METHOD_SAFE(a_vm, SCRIPT_NAME, GetRawType);
 		BIND_METHOD_SAFE(a_vm, SCRIPT_NAME, Mod);
 		BIND_METHOD_SAFE(a_vm, SCRIPT_NAME, ModF);

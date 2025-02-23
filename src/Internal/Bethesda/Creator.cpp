@@ -195,17 +195,58 @@ namespace Internal::Creator
 		return true;
 	}
 
-	RE::BSScript::Variable GetDefaultValue(const RE::BSScript::TypeInfo& a_typeInfo) noexcept
+	RE::BSScript::Variable GetDefaultValue(const RE::BSScript::TypeInfo& a_typeInfo)
 	{
-		auto value = RE::BSScript::Variable();
-		auto* typeInfo = reinterpret_cast<RE::BSScript::TypeInfo*>(reinterpret_cast<std::uintptr_t>(&value) + 0x0);
+		using raw_type_t = RE::BSScript::TypeInfo::RawType;
 
-		*typeInfo = a_typeInfo;
+		auto value = RE::BSScript::Variable();
+
+		switch (a_typeInfo.GetRawType()) {
+			case raw_type_t::kNone:
+				break;
+			case raw_type_t::kBool:
+				value = false;
+				break;
+			case raw_type_t::kInt:
+				value = 0;
+				break;
+			case raw_type_t::kFloat:
+				value = 0.0f;
+				break;
+			case raw_type_t::kString:
+				value = RE::BSFixedString();
+				break;
+			case raw_type_t::kObject:
+				value = RE::BSTSmartPointer<RE::BSScript::Object>();
+				value.SetType(a_typeInfo);
+				break;
+			case raw_type_t::kStruct:
+				value = RE::BSTSmartPointer<RE::BSScript::Struct>();
+				value.SetType(a_typeInfo);
+				break;
+			case raw_type_t::kVar:
+				value = static_cast<RE::BSScript::Variable*>(nullptr);
+				break;
+			case raw_type_t::kArrayBool:
+			case raw_type_t::kArrayInt:
+			case raw_type_t::kArrayFloat:
+			case raw_type_t::kArrayString:
+			case raw_type_t::kArrayObject:
+			case raw_type_t::kArrayStruct:
+			case raw_type_t::kArrayVar:
+				value = RE::BSTSmartPointer<RE::BSScript::Array>();
+				value.SetType(a_typeInfo);
+				break;
+			default:
+				assert(false);
+				break;
+		}
+
 		return value;
 	}
 
 	RE::BSScript::ObjectTypeInfo::NamedStateInfo* GetDefaultState(
-		const RE::BSTSmartPointer<RE::BSScript::ObjectTypeInfo>& a_typeInfo) noexcept
+		const RE::BSTSmartPointer<RE::BSScript::ObjectTypeInfo>& a_typeInfo)
 	{
 		const auto count = a_typeInfo->GetNumNamedStates();
 		if (count == 0) {
@@ -220,7 +261,7 @@ namespace Internal::Creator
 
 	RE::BSContainer::ForEachResult ForEachVariable(
 		const RE::BSTSmartPointer<RE::BSScript::ObjectTypeInfo>& a_typeInfo,
-		std::function<RE::BSContainer::ForEachResult(RE::BSScript::ObjectTypeInfo::VariableInfo&, std::uint32_t)> a_function) noexcept
+		std::function<RE::BSContainer::ForEachResult(RE::BSScript::ObjectTypeInfo::VariableInfo&, std::uint32_t)> a_function)
 	{
 		auto varIndex = 0ui32;
 		for (auto* typeInfo = a_typeInfo.get(); typeInfo; typeInfo = typeInfo->GetParent()) {
@@ -239,7 +280,7 @@ namespace Internal::Creator
 
 	RE::BSContainer::ForEachResult ForEachProperty(
 		const RE::BSTSmartPointer<RE::BSScript::ObjectTypeInfo>& a_typeInfo,
-		std::function<RE::BSContainer::ForEachResult(RE::BSScript::ObjectTypeInfo::PropertyInfo&)> a_function) noexcept
+		std::function<RE::BSContainer::ForEachResult(RE::BSScript::ObjectTypeInfo::PropertyInfo&)> a_function)
 	{
 		for (auto* typeInfo = a_typeInfo.get(); typeInfo; typeInfo = typeInfo->GetParent()) {
 			auto* propIt = typeInfo->GetPropertyIter();

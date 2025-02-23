@@ -10,7 +10,7 @@ namespace Internal::Events
 		: public IEventHandler,
 		  public RE::BSTEventSink<HUDColorUpdateEvent>
 	{
-	private:
+	public:
 		using EventArgs = RE::BSScript::structure_wrapper<"System:Events", "HUDColorUpdateArgs">;
 
 	public:

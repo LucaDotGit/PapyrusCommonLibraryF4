@@ -10,7 +10,7 @@ namespace Internal::Events
 		: public IEventHandler,
 		  public RE::BSTEventSink<TriggerEnterLeaveEvent>
 	{
-	private:
+	public:
 		using EventArgs = RE::BSScript::structure_wrapper<"System:Events", "TriggerEnterLeaveArgs">;
 
 	public:

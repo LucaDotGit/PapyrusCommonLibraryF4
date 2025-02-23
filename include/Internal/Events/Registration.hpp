@@ -13,15 +13,15 @@ namespace Internal::Events
 		static auto Handlers = Types::unordered_string_map<RE::BSFixedString,
 			Types::unordered_string_map<RE::BSFixedString, std::unique_ptr<const IEventHandler>>>();
 
+		[[nodiscard]] bool IsRegisteredForAny(const ScriptReceivers::ScriptReceiver& a_receiver);
+		bool UnregisterForAny(const ScriptReceivers::ScriptReceiver& a_receiver);
+		bool UnregisterForAll(const RE::BSFixedString& a_scriptName);
+
 		template <event_handler_v TEventHandler>
 		[[nodiscard]] static bool TypeEquals(const IEventHandler& a_eventHandler)
 		{
 			return typeid(a_eventHandler) == typeid(TEventHandler);
 		}
-
-		[[nodiscard]] bool IsRegisteredForAny(const ScriptReceivers::ScriptReceiver& a_receiver);
-		bool UnregisterForAny(const ScriptReceivers::ScriptReceiver& a_receiver);
-		bool UnregisterForAll(const RE::BSFixedString& a_scriptName);
 
 		template <event_handler_v TEventHandler>
 		[[nodiscard]] std::optional<std::reference_wrapper<const TEventHandler>> GetHandler(const ScriptReceivers::ScriptReceiver& a_receiver)

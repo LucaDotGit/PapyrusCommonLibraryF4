@@ -42,76 +42,6 @@ namespace Internal::Copier
 		return new RE::BSScript::Variable(copy);
 	}
 
-	std::vector<const RE::BSScript::Variable*> CopyArray(
-		const std::vector<const RE::BSScript::Variable*>& a_array)
-	{
-		auto result = std::vector<const RE::BSScript::Variable*>();
-		result.reserve(a_array.size());
-
-		for (const auto* element : a_array) {
-			const auto* value = CopyVar(element);
-			result.push_back(value);
-		}
-
-		return result;
-	}
-
-	std::vector<const RE::BSScript::Variable*> DeepCopyArray(
-		const std::vector<const RE::BSScript::Variable*>& a_array)
-	{
-		auto result = std::vector<const RE::BSScript::Variable*>();
-		result.reserve(a_array.size());
-
-		for (const auto* element : a_array) {
-			const auto* value = DeepCopyVar(element);
-			result.push_back(value);
-		}
-
-		return result;
-	}
-
-	RE::BSScript::Variable VarArrayToVar(
-		const std::vector<const RE::BSScript::Variable*>& a_array)
-	{
-		constexpr auto DEFAULT_TYPE = RE::BSScript::TypeInfo::RawType::kVar;
-
-		const auto vm = RE::GameVM::GetSingleton()->GetVM();
-		const auto size = static_cast<std::uint32_t>(a_array.size());
-
-		auto result = RE::BSTSmartPointer<RE::BSScript::Array>();
-		vm->CreateArray(DEFAULT_TYPE, size, result);
-
-		for (auto i = 0ui32; i < size; i++) {
-			auto* value = CopyVar(a_array[i]);
-			result->elements[i] = value;
-		}
-
-		return ToVar(std::move(result));
-	}
-
-	std::vector<const RE::BSScript::Variable*> VarToVarArray(
-		const RE::BSScript::Variable* a_value)
-	{
-		if (!a_value || !a_value->is<RE::BSScript::Array>()) {
-			return {};
-		}
-
-		const auto array = RE::BSScript::get<RE::BSScript::Array>(*a_value);
-		if (!array) {
-			return {};
-		}
-
-		auto result = std::vector<const RE::BSScript::Variable*>();
-		result.reserve(array->size());
-
-		for (const auto& element : array->elements) {
-			const auto* value = CopyVar(&element);
-			result.push_back(value);
-		}
-
-		return result;
-	}
-
 	RE::BSScript::Variable DeepCopyStruct(
 		const RE::BSTSmartPointer<RE::BSScript::Struct>& a_struct)
 	{
@@ -160,5 +90,75 @@ namespace Internal::Copier
 		}
 
 		return ToVar(std::move(result));
+	}
+
+	std::vector<const RE::BSScript::Variable*> CopyArray(
+		const std::vector<const RE::BSScript::Variable*>& a_array)
+	{
+		auto result = std::vector<const RE::BSScript::Variable*>();
+		result.reserve(a_array.size());
+
+		for (const auto* element : a_array) {
+			const auto* value = CopyVar(element);
+			result.push_back(value);
+		}
+
+		return result;
+	}
+
+	std::vector<const RE::BSScript::Variable*> DeepCopyArray(
+		const std::vector<const RE::BSScript::Variable*>& a_array)
+	{
+		auto result = std::vector<const RE::BSScript::Variable*>();
+		result.reserve(a_array.size());
+
+		for (const auto* element : a_array) {
+			const auto* value = DeepCopyVar(element);
+			result.push_back(value);
+		}
+
+		return result;
+	}
+
+	RE::BSScript::Variable VarArrayToVar(
+		const std::vector<const RE::BSScript::Variable*>& a_array)
+	{
+		const auto defaultType = RE::BSScript::TypeInfo(RE::BSScript::TypeInfo::RawType::kVar);
+
+		const auto vm = RE::GameVM::GetSingleton()->GetVM();
+		const auto size = static_cast<std::uint32_t>(a_array.size());
+
+		auto result = RE::BSTSmartPointer<RE::BSScript::Array>();
+		vm->CreateArray(defaultType, size, result);
+
+		for (auto i = 0ui32; i < size; i++) {
+			auto* value = CopyVar(a_array[i]);
+			result->elements[i] = value;
+		}
+
+		return ToVar(std::move(result));
+	}
+
+	std::vector<const RE::BSScript::Variable*> VarToVarArray(
+		const RE::BSScript::Variable* a_value)
+	{
+		if (!a_value || !a_value->is<RE::BSScript::Array>()) {
+			return {};
+		}
+
+		const auto array = RE::BSScript::get<RE::BSScript::Array>(*a_value);
+		if (!array) {
+			return {};
+		}
+
+		auto result = std::vector<const RE::BSScript::Variable*>();
+		result.reserve(array->size());
+
+		for (const auto& element : array->elements) {
+			const auto* value = new RE::BSScript::Variable(element);
+			result.push_back(value);
+		}
+
+		return result;
 	}
 }

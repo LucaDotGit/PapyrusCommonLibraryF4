@@ -8,10 +8,10 @@ namespace System::Regex
 								  boost::regex::icase |
 								  boost::regex::no_empty_expressions;
 
-	static const auto ESCAPE_PATTERN = boost::regex{ R"([.*+?^${}()|[\]\\])"s, FLAGS };
+	static const auto ESCAPE_PATTERN = boost::regex(R"([.*+?^${}()|[\]\\])"s, FLAGS);
 	static constexpr auto ESCAPE_REPLACEMENT = R"(\\$&)"sv;
 
-	static const auto UNESCAPE_PATTERN = boost::regex{ R"(\\([.*+?^${}()|[\]\\]))"s, FLAGS };
+	static const auto UNESCAPE_PATTERN = boost::regex(R"(\\([.*+?^${}()|[\]\\]))"s, FLAGS);
 	static constexpr auto UNESCAPE_REPLACEMENT = R"($1)"sv;
 
 	[[nodiscard]] static constexpr std::uint32_t GetFlags(std::string_view a_flags) noexcept

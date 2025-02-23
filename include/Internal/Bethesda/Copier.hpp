@@ -8,12 +8,18 @@ namespace Internal::Copier
 	[[nodiscard]] RE::BSScript::Variable DeepCopy(const RE::BSScript::Variable* a_var);
 	[[nodiscard]] RE::BSScript::Variable* DeepCopyVar(const RE::BSScript::Variable* a_var);
 
+	[[nodiscard]] RE::BSScript::Variable DeepCopyStruct(
+		const RE::BSTSmartPointer<RE::BSScript::Struct>& a_struct);
+	[[nodiscard]] RE::BSScript::Variable DeepCopyArray(
+		const RE::BSTSmartPointer<RE::BSScript::Array>& a_array);
+
 	[[nodiscard]] std::vector<const RE::BSScript::Variable*> CopyArray(
 		const std::vector<const RE::BSScript::Variable*>& a_array);
 	[[nodiscard]] std::vector<const RE::BSScript::Variable*> DeepCopyArray(
 		const std::vector<const RE::BSScript::Variable*>& a_array);
 
 	template <typename T>
+		requires std::is_assignable_v<RE::BSScript::Variable, T>
 	[[nodiscard]] RE::BSScript::Variable ToVar(T&& a_value)
 	{
 		auto result = RE::BSScript::Variable();
@@ -22,6 +28,7 @@ namespace Internal::Copier
 	}
 
 	template <typename T>
+		requires std::is_assignable_v<RE::BSScript::Variable, T>
 	[[nodiscard]] RE::BSScript::Variable* ToVarPtr(T&& a_value)
 	{
 		auto* result = new RE::BSScript::Variable();
@@ -86,9 +93,4 @@ namespace Internal::Copier
 		const std::vector<const RE::BSScript::Variable*>& a_array);
 	[[nodiscard]] std::vector<const RE::BSScript::Variable*> VarToVarArray(
 		const RE::BSScript::Variable* a_value);
-
-	[[nodiscard]] RE::BSScript::Variable DeepCopyStruct(
-		const RE::BSTSmartPointer<RE::BSScript::Struct>& a_struct);
-	[[nodiscard]] RE::BSScript::Variable DeepCopyArray(
-		const RE::BSTSmartPointer<RE::BSScript::Array>& a_array);
 }

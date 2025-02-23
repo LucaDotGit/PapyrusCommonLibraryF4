@@ -83,10 +83,8 @@ namespace System::Faction
 				return;
 			}
 
-			const auto* object = a_reaction->form ? a_reaction->form->As<RE::TESForm>() : nullptr;
-
 			auto data = Relation();
-			data.insert(OBJECT_KEY, object);
+			data.insert(OBJECT_KEY, a_reaction->form);
 			data.insert(MODIFIER_KEY, a_reaction->reaction);
 			data.insert(COMBAT_REACTION_KEY, a_reaction->fightReaction);
 
@@ -94,7 +92,6 @@ namespace System::Faction
 		});
 
 		data.insert(RELATIONS_KEY, std::move(newList));
-
 		return data;
 	}
 
@@ -156,10 +153,14 @@ namespace System::Faction
 		oldList.clear();
 
 		std::ranges::for_each(newList | std::ranges::views::reverse, [&](const Relation& a_relation) {
+			if (!a_relation) {
+				return;
+			}
+
 			auto* reaction = new RE::GROUP_REACTION();
 
 			reaction->form = a_relation.find<RE::TESFaction*>(OBJECT_KEY).value_or(nullptr);
-			reaction->reaction = a_relation.find<std::int32_t>(MODIFIER_KEY).value_or(0);
+			reaction->reaction = a_relation.find<std::int32_t>(MODIFIER_KEY).value();
 			reaction->fightReaction = a_relation.find<RE::FIGHT_REACTION>(COMBAT_REACTION_KEY).value_or(RE::FIGHT_REACTION::kNeutral);
 
 			oldList.emplace_front(reaction);

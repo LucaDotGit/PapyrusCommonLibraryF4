@@ -8,7 +8,7 @@ namespace Internal::Events
 		: public IEventHandler,
 		  public RE::BSTEventSink<RE::TESObjectLoadedEvent>
 	{
-	private:
+	public:
 		using EventArgs = RE::BSScript::structure_wrapper<"System:Events", "ObjectLoadUnloadArgs">;
 
 	public:

@@ -46,7 +46,7 @@ namespace Internal::Types
 	{
 		[[nodiscard]] std::size_t operator()(const RE::TESForm* a_form) const noexcept
 		{
-			const auto formID = a_form ? a_form->formID : 0;
+			const auto formID = a_form ? a_form->GetFormID() : 0;
 			return std::hash<std::uint32_t>()(formID);
 		}
 	};

@@ -10,7 +10,7 @@ namespace Internal::Events
 		: public IEventHandler,
 		  public RE::BSTEventSink<PerkPointIncreaseEvent>
 	{
-	private:
+	public:
 		using EventArgs = RE::BSScript::structure_wrapper<"System:Events", "PerkPointIncreaseArgs">;
 
 	public:

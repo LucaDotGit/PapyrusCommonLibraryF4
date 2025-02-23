@@ -41,11 +41,12 @@ bool Function IsStruct(Var akValue) Global Native
 bool Function IsArray(Var akValue) Global Native
 
 
+bool Function Equals(Var akLeft, Var akRight) Global Native
+bool Function RefEquals(Var akLeft, Var akRight) Global Native
+bool Function TypeEquals(Var akLeft, Var akRight) Global Native
+
 int Function Compare(Var akLeft, Var akRight) Global Native
 
-bool Function Equals(Var akLeft, Var akRight) Global
-	return Compare(akLeft, akRight) == 0
-EndFunction
 bool Function IsLessThan(Var akLeft, Var akRight) Global
 	return Compare(akLeft, akRight) < 0
 EndFunction
@@ -61,9 +62,6 @@ EndFunction
 bool Function IsInRange(Var akValue, Var akMin, Var akMax) Global
 	return Compare(akValue, akMin) >= 0 && Compare(akValue, akMax) <= 0
 EndFunction
-
-bool Function RefEquals(Var akLeft, Var akRight) Global Native
-bool Function TypeEquals(Var akLeft, Var akRight) Global Native
 
 int Function GetRawType(Var akValue) Global Native
 

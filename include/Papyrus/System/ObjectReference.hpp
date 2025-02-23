@@ -180,9 +180,9 @@ namespace System::ObjectReference
 			return false;
 		}
 
-		const auto extraList = a_markerRef->extraList;
+		auto& extraList = a_markerRef->extraList;
 		if (!extraList) {
-			return false;
+			extraList = RE::make_smart<RE::ExtraDataList>();
 		}
 
 		const auto lock = RE::BSAutoWriteLock{ extraList->extraRWLock };
@@ -229,7 +229,7 @@ namespace System::ObjectReference
 			return nullptr;
 		}
 
-		const auto refHandle = extraDropper->handle;
+		const auto& refHandle = extraDropper->handle;
 		return refHandle ? refHandle.get().get() : nullptr;
 	}
 
@@ -280,9 +280,9 @@ namespace System::ObjectReference
 			return;
 		}
 
-		auto extraList = a_itemRef->extraList;
+		auto& extraList = a_itemRef->extraList;
 		if (!extraList) {
-			return;
+			extraList = RE::make_smart<RE::ExtraDataList>();
 		}
 
 		const auto lock = RE::BSAutoWriteLock{ extraList->extraRWLock };
@@ -362,9 +362,13 @@ namespace System::ObjectReference
 			return false;
 		}
 
-		const auto extraList = linkedDoor->extraList;
-		if (!extraList || (a_doorRef->formFlags & RE::TESObjectREFR::RecordFlags::kPersistent) == 0) {
+		if ((a_doorRef->formFlags & RE::TESObjectREFR::RecordFlags::kPersistent) == 0) {
 			return false;
+		}
+
+		auto& extraList = linkedDoor->extraList;
+		if (!extraList) {
+			extraList = RE::make_smart<RE::ExtraDataList>();
 		}
 
 		const auto positionData = a_data.find<::Internal::Vectors::Vector3>(POSITION_KEY).value_or(nullptr);

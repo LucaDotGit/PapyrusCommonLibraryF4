@@ -10,7 +10,7 @@ namespace Internal::Events
 		: public IEventHandler,
 		  public RE::BSTEventSink<ObjectGrabReleaseEvent>
 	{
-	private:
+	public:
 		using EventArgs = RE::BSScript::structure_wrapper<"System:Events", "ObjectGrabReleaseArgs">;
 
 	public:

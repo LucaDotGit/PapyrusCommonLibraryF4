@@ -64,7 +64,8 @@ namespace System::Spell
 		spellData.chargeTime = a_data.find<float>(CHARGE_TIME_KEY).value();
 		spellData.castDuration = a_data.find<float>(CAST_DURATION_KEY).value();
 		spellData.castingPerk = a_data.find<RE::BGSPerk*>(CASTING_PERK_KEY).value_or(nullptr);
-		::Internal::MagicItem::SetEntries(a_spell, a_data.find<std::vector<::Internal::MagicItem::Entry>>(EFFECTS_KEY).value_or(std::vector<::Internal::MagicItem::Entry>()));
+		::Internal::MagicItem::SetEntries(a_spell, a_data.find<std::vector<::Internal::MagicItem::Entry>>(EFFECTS_KEY)
+													   .value_or(std::vector<::Internal::MagicItem::Entry>()));
 	}
 
 	static bool RegisterFunctions(RE::BSScript::IVirtualMachine* a_vm)

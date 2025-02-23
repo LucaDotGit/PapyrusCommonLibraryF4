@@ -96,6 +96,9 @@ namespace System::Perk
 
 		for (auto i = 0ui32; i < maxIndex; i++) {
 			const auto& entry = entries[i];
+			if (!entry) {
+				continue;
+			}
 
 			auto* perkEntry = a_perk->perkEntries[i];
 			if (!perkEntry) {

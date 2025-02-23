@@ -200,7 +200,7 @@ namespace System::Form
 
 		const auto* dataHandler = RE::TESDataHandler::GetSingleton();
 		const auto* file = dataHandler->LookupModByName(a_modName);
-		return file ? file->IsFormInMod(a_form->formID) : false;
+		return file ? file->IsFormInMod(a_form->GetFormID()) : false;
 	}
 
 	static std::string_view GetModName(RE::BSScript::IVirtualMachine& a_vm, RE::VMStackID a_stackID, std::monostate,
@@ -635,8 +635,12 @@ namespace System::Form
 		properties->reserve(static_cast<std::uint32_t>(a_entries.size()));
 
 		for (const auto& entry : a_entries) {
+			if (!entry) {
+				continue;
+			}
+
 			auto* object = entry.find<RE::ActorValueInfo*>(OBJECT_KEY).value_or(nullptr);
-			auto value = entry.find<float>(VALUE_KEY).value_or(0.0f);
+			auto value = entry.find<float>(VALUE_KEY).value();
 
 			auto pair = RE::BGSTypedFormValuePair::SharedVal();
 			pair.f = value;

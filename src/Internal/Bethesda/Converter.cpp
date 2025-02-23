@@ -103,12 +103,7 @@ namespace Internal::Converter
 			return NONE;
 		}
 
-		const auto& typeInfo = a_value->type;
-		if (!typeInfo) {
-			return NONE;
-		}
-
-		return fmt::format("[{} <{} ({:08X})>]", typeInfo->name, form->GetFormEditorID(), form->GetFormID());
+		return ToString(form);
 	}
 
 	std::string ToString(const RE::BSTSmartPointer<RE::BSScript::Struct>& a_value)
@@ -174,42 +169,44 @@ namespace Internal::Converter
 			return NONE;
 		}
 
+		using raw_type_t = RE::BSScript::TypeInfo::RawType;
+
 		switch (a_value->GetType().GetRawType()) {
-			case RE::BSScript::TypeInfo::RawType::kBool: {
+			case raw_type_t::kBool: {
 				const auto value = RE::BSScript::get<bool>(*a_value);
 				return ToString(value);
 			}
-			case RE::BSScript::TypeInfo::RawType::kInt: {
+			case raw_type_t::kInt: {
 				const auto value = RE::BSScript::get<std::int32_t>(*a_value);
 				return ToString(value);
 			}
-			case RE::BSScript::TypeInfo::RawType::kFloat: {
+			case raw_type_t::kFloat: {
 				const auto value = RE::BSScript::get<float>(*a_value);
 				return ToString(value);
 			}
-			case RE::BSScript::TypeInfo::RawType::kString: {
+			case raw_type_t::kString: {
 				const auto value = RE::BSScript::get<RE::BSFixedString>(*a_value);
 				return ToString(value);
 			}
-			case RE::BSScript::TypeInfo::RawType::kObject: {
+			case raw_type_t::kObject: {
 				const auto value = RE::BSScript::get<RE::BSScript::Object>(*a_value);
 				return ToString(value);
 			}
-			case RE::BSScript::TypeInfo::RawType::kStruct: {
+			case raw_type_t::kStruct: {
 				const auto value = RE::BSScript::get<RE::BSScript::Struct>(*a_value);
 				return ToString(value);
 			}
-			case RE::BSScript::TypeInfo::RawType::kVar: {
+			case raw_type_t::kVar: {
 				const auto* value = RE::BSScript::get<RE::BSScript::Variable>(*a_value);
 				return ToString(value);
 			}
-			case RE::BSScript::TypeInfo::RawType::kArrayBool:
-			case RE::BSScript::TypeInfo::RawType::kArrayInt:
-			case RE::BSScript::TypeInfo::RawType::kArrayFloat:
-			case RE::BSScript::TypeInfo::RawType::kArrayString:
-			case RE::BSScript::TypeInfo::RawType::kArrayObject:
-			case RE::BSScript::TypeInfo::RawType::kArrayStruct:
-			case RE::BSScript::TypeInfo::RawType::kArrayVar: {
+			case raw_type_t::kArrayBool:
+			case raw_type_t::kArrayInt:
+			case raw_type_t::kArrayFloat:
+			case raw_type_t::kArrayString:
+			case raw_type_t::kArrayObject:
+			case raw_type_t::kArrayStruct:
+			case raw_type_t::kArrayVar: {
 				const auto value = RE::BSScript::get<RE::BSScript::Array>(*a_value);
 				return ToString(value);
 			}
@@ -217,5 +214,14 @@ namespace Internal::Converter
 				return NONE;
 			}
 		}
+	}
+
+	std::string ToString(const RE::TESForm* a_value)
+	{
+		if (!a_value) {
+			return NONE;
+		}
+
+		return fmt::format("[{} <{} ({:08X})>]", a_value->GetFormTypeString(), a_value->GetFormEditorID(), a_value->GetFormID());
 	}
 }

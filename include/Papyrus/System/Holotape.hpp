@@ -77,7 +77,7 @@ namespace System::Holotape
 
 				a_holotape->programFile = nullptr;
 				a_holotape->noteSound = nullptr;
-				a_holotape->noteFormID = scene ? scene->formID : 0;
+				a_holotape->noteFormID = scene ? scene->GetFormID() : 0;
 				break;
 			}
 			case RE::BGSNote::NOTE_TYPE::kProgram: {
@@ -85,7 +85,7 @@ namespace System::Holotape
 
 				a_holotape->noteSound = nullptr;
 				a_holotape->noteFormID = 0;
-				a_holotape->programFile = program;
+				a_holotape->programFile = std::move(program);
 				break;
 			}
 			case RE::BGSNote::NOTE_TYPE::kTerminal: {
@@ -93,7 +93,7 @@ namespace System::Holotape
 
 				a_holotape->programFile = nullptr;
 				a_holotape->noteSound = nullptr;
-				a_holotape->noteFormID = terminal ? terminal->formID : 0;
+				a_holotape->noteFormID = terminal ? terminal->GetFormID() : 0;
 				break;
 			}
 		}

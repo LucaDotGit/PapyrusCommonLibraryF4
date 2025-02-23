@@ -90,10 +90,13 @@ namespace System::MiscObject
 
 		for (auto i = 0ui32; i < newSize; i++) {
 			const auto& entry = newComponents[i];
+			if (!entry) {
+				continue;
+			}
 
 			auto* object = entry.find<RE::BGSComponent*>(OBJECT_KEY).value_or(nullptr);
-			auto count = entry.find<std::uint32_t>(COUNT_KEY).value_or(0);
-			auto displayIndex = entry.find<std::uint8_t>(DISPLAY_INDEX_KEY).value_or(0);
+			auto count = entry.find<std::uint32_t>(COUNT_KEY).value();
+			auto displayIndex = entry.find<std::uint8_t>(DISPLAY_INDEX_KEY).value();
 
 			auto pair = RE::BGSTypedFormValuePair::SharedVal();
 			pair.i = count;

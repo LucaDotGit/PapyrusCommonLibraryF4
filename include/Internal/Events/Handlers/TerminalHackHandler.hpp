@@ -8,7 +8,7 @@ namespace Internal::Events
 		: public IEventHandler,
 		  public RE::BSTEventSink<RE::TerminalHacked::Event>
 	{
-	private:
+	public:
 		using EventArgs = RE::BSScript::structure_wrapper<"System:Events", "TerminalHackArgs">;
 
 	public:

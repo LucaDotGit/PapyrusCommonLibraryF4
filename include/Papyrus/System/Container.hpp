@@ -54,7 +54,6 @@ namespace System::Container
 		}
 
 		data.insert(ITEMS_KEY, std::move(entries));
-
 		return data;
 	}
 
@@ -109,9 +108,12 @@ namespace System::Container
 
 			for (auto i = 0ui32; i < newSize; i++) {
 				const auto& entry = newEntries[i];
+				if (!entry) {
+					continue;
+				}
 
 				auto* object = entry.find<RE::TESBoundObject*>(ITEM_KEY).value_or(nullptr);
-				auto count = entry.find<std::int32_t>(COUNT_KEY).value_or(0);
+				auto count = entry.find<std::int32_t>(COUNT_KEY).value();
 				auto* owner = entry.find<RE::TESForm*>(OWNER_KEY).value_or(nullptr);
 
 				oldEntries[i] = new RE::ContainerObject(object, count, owner);

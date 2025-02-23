@@ -109,7 +109,7 @@ namespace System::Array::Creation
 
 		for (auto i = 0; i < a_count; i++) {
 			const auto var = ::Internal::Copier::VarArrayToVar(a_array);
-			const auto* value = ::Internal::Copier::CopyVar(&var);
+			const auto* value = new RE::BSScript::Variable(var);
 			result.push_back(value);
 		}
 
@@ -174,42 +174,42 @@ namespace System::Array::Creation
 		std::vector<bool> a_array)
 	{
 		const auto value = ::Internal::Copier::TArrayToVar(a_array);
-		return ::Internal::Copier::CopyVar(&value);
+		return new RE::BSScript::Variable(value);
 	}
 
 	static const RE::BSScript::Variable* IntArrayToVar(std::monostate,
 		std::vector<std::int32_t> a_array)
 	{
 		const auto value = ::Internal::Copier::TArrayToVar(a_array);
-		return ::Internal::Copier::CopyVar(&value);
+		return new RE::BSScript::Variable(value);
 	}
 
 	static const RE::BSScript::Variable* FloatArrayToVar(std::monostate,
 		std::vector<float> a_array)
 	{
 		const auto value = ::Internal::Copier::TArrayToVar(a_array);
-		return ::Internal::Copier::CopyVar(&value);
+		return new RE::BSScript::Variable(value);
 	}
 
 	static const RE::BSScript::Variable* StringArrayToVar(std::monostate,
 		std::vector<RE::BSFixedString> a_array)
 	{
 		const auto value = ::Internal::Copier::TArrayToVar(a_array);
-		return ::Internal::Copier::CopyVar(&value);
+		return new RE::BSScript::Variable(value);
 	}
 
 	static const RE::BSScript::Variable* ObjectArrayToVar(std::monostate,
 		std::vector<RE::BSTSmartPointer<RE::BSScript::Object>> a_array)
 	{
 		const auto value = ::Internal::Copier::TArrayToVar(a_array);
-		return ::Internal::Copier::CopyVar(&value);
+		return new RE::BSScript::Variable(value);
 	}
 
 	static const RE::BSScript::Variable* VarArrayToVar(std::monostate,
 		std::vector<const RE::BSScript::Variable*> a_array)
 	{
 		const auto value = ::Internal::Copier::VarArrayToVar(a_array);
-		return ::Internal::Copier::CopyVar(&value);
+		return new RE::BSScript::Variable(value);
 	}
 
 	static std::vector<bool> VarToBoolArray(std::monostate,

@@ -2,8 +2,6 @@
 
 namespace Internal::Patches::EditorIDCache
 {
-	static auto EditorIDs = std::unordered_map<std::uint32_t, RE::BSFixedString>();
-
 	void Install() noexcept;
 
 	static const char* GetFormEditorIDImpl(RE::TESForm* a_this);

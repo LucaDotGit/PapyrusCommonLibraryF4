@@ -4,53 +4,55 @@
 
 namespace Internal::Serialization::Serializer
 {
+	using raw_type_t = RE::BSScript::TypeInfo::RawType;
+
 	RE::BSScript::Variable ReadRecordVar(
 		const F4SE::SerializationInterface* a_interface)
 	{
 		const auto type = ReadRecordT<Serialization::vm_type_t>(a_interface);
 		auto value = RE::BSScript::Variable();
 
-		switch (static_cast<RE::BSScript::TypeInfo::RawType>(type)) {
-			case RE::BSScript::TypeInfo::RawType::kNone: {
+		switch (static_cast<raw_type_t>(type)) {
+			case raw_type_t::kNone: {
 				value = ReadRecordT<std::nullptr_t>(a_interface);
 				break;
 			}
-			case RE::BSScript::TypeInfo::RawType::kBool: {
+			case raw_type_t::kBool: {
 				value = ReadRecordT<bool>(a_interface);
 				break;
 			}
-			case RE::BSScript::TypeInfo::RawType::kInt: {
+			case raw_type_t::kInt: {
 				value = ReadRecordT<std::int32_t>(a_interface);
 				break;
 			}
-			case RE::BSScript::TypeInfo::RawType::kFloat: {
+			case raw_type_t::kFloat: {
 				value = ReadRecordT<float>(a_interface);
 				break;
 			}
-			case RE::BSScript::TypeInfo::RawType::kString: {
+			case raw_type_t::kString: {
 				value = ReadRecordString(a_interface);
 				break;
 			}
-			case RE::BSScript::TypeInfo::RawType::kObject: {
+			case raw_type_t::kObject: {
 				value = ReadRecordObject(a_interface);
 				break;
 			}
-			case RE::BSScript::TypeInfo::RawType::kStruct: {
+			case raw_type_t::kStruct: {
 				value = ReadRecordStruct(a_interface);
 				break;
 			}
-			case RE::BSScript::TypeInfo::RawType::kVar: {
+			case raw_type_t::kVar: {
 				const auto var = ReadRecordVar(a_interface);
-				value = Copier::CopyVar(&var);
+				value = new RE::BSScript::Variable(var);
 				break;
 			}
-			case RE::BSScript::TypeInfo::RawType::kArrayBool:
-			case RE::BSScript::TypeInfo::RawType::kArrayInt:
-			case RE::BSScript::TypeInfo::RawType::kArrayFloat:
-			case RE::BSScript::TypeInfo::RawType::kArrayString:
-			case RE::BSScript::TypeInfo::RawType::kArrayObject:
-			case RE::BSScript::TypeInfo::RawType::kArrayStruct:
-			case RE::BSScript::TypeInfo::RawType::kArrayVar: {
+			case raw_type_t::kArrayBool:
+			case raw_type_t::kArrayInt:
+			case raw_type_t::kArrayFloat:
+			case raw_type_t::kArrayString:
+			case raw_type_t::kArrayObject:
+			case raw_type_t::kArrayStruct:
+			case raw_type_t::kArrayVar: {
 				value = ReadRecordArray(a_interface, type);
 				break;
 			}
@@ -68,47 +70,51 @@ namespace Internal::Serialization::Serializer
 			return false;
 		}
 
-		switch (static_cast<RE::BSScript::TypeInfo::RawType>(type)) {
-			case RE::BSScript::TypeInfo::RawType::kNone: {
+		switch (static_cast<raw_type_t>(type)) {
+			case raw_type_t::kNone: {
 				const auto value = RE::BSScript::get<std::nullptr_t>(a_value);
 				return WriteRecordT(a_interface, value);
 			}
-			case RE::BSScript::TypeInfo::RawType::kBool: {
+			case raw_type_t::kBool: {
 				const auto value = RE::BSScript::get<bool>(a_value);
 				return WriteRecordT(a_interface, value);
 			}
-			case RE::BSScript::TypeInfo::RawType::kInt: {
+			case raw_type_t::kInt: {
 				const auto value = RE::BSScript::get<std::int32_t>(a_value);
 				return WriteRecordT(a_interface, value);
 			}
-			case RE::BSScript::TypeInfo::RawType::kFloat: {
+			case raw_type_t::kFloat: {
 				const auto value = RE::BSScript::get<float>(a_value);
 				return WriteRecordT(a_interface, value);
 			}
-			case RE::BSScript::TypeInfo::RawType::kString: {
+			case raw_type_t::kString: {
 				const auto value = RE::BSScript::get<RE::BSFixedString>(a_value);
 				return WriteRecordString(a_interface, value);
 			}
-			case RE::BSScript::TypeInfo::RawType::kObject: {
+			case raw_type_t::kObject: {
 				const auto value = RE::BSScript::get<RE::BSScript::Object>(a_value);
 				return WriteRecordObject(a_interface, value);
 			}
-			case RE::BSScript::TypeInfo::RawType::kStruct: {
+			case raw_type_t::kStruct: {
 				const auto value = RE::BSScript::get<RE::BSScript::Struct>(a_value);
 				return WriteRecordStruct(a_interface, value);
 			}
-			case RE::BSScript::TypeInfo::RawType::kVar: {
+			case raw_type_t::kVar: {
 				const auto* value = RE::BSScript::get<RE::BSScript::Variable>(a_value);
-				const auto var = Copier::Copy(value);
-				return WriteRecordVar(a_interface, var);
+				if (!value) {
+					WriteRecordVar(a_interface, RE::BSScript::Variable());
+					return false;
+				}
+
+				return WriteRecordVar(a_interface, *value);
 			}
-			case RE::BSScript::TypeInfo::RawType::kArrayBool:
-			case RE::BSScript::TypeInfo::RawType::kArrayInt:
-			case RE::BSScript::TypeInfo::RawType::kArrayFloat:
-			case RE::BSScript::TypeInfo::RawType::kArrayString:
-			case RE::BSScript::TypeInfo::RawType::kArrayObject:
-			case RE::BSScript::TypeInfo::RawType::kArrayStruct:
-			case RE::BSScript::TypeInfo::RawType::kArrayVar: {
+			case raw_type_t::kArrayBool:
+			case raw_type_t::kArrayInt:
+			case raw_type_t::kArrayFloat:
+			case raw_type_t::kArrayString:
+			case raw_type_t::kArrayObject:
+			case raw_type_t::kArrayStruct:
+			case raw_type_t::kArrayVar: {
 				const auto value = RE::BSScript::get<RE::BSScript::Array>(a_value);
 				return WriteRecordArray(a_interface, value);
 			}
@@ -225,8 +231,10 @@ namespace Internal::Serialization::Serializer
 			}
 
 			const auto index = nameIt->second;
-			if (Comparer::TypeEquals(&var, &structure->variables[index])) {
-				structure->variables[index] = std::move(var);
+			auto& element = structure->variables[index];
+
+			if (Comparer::TypeEquals(&var, &element)) {
+				element = std::move(var);
 			}
 		}
 
@@ -238,7 +246,7 @@ namespace Internal::Serialization::Serializer
 		const RE::BSTSmartPointer<RE::BSScript::Struct>& a_struct)
 	{
 		if (!a_struct) {
-			return WriteRecordString(a_interface, nullptr) &&
+			return WriteRecordString(a_interface, RE::BSFixedString()) &&
 				   WriteRecordT(a_interface, static_cast<Serialization::size_t>(0));
 		}
 
@@ -246,7 +254,7 @@ namespace Internal::Serialization::Serializer
 
 		const auto& typeInfo = a_struct->type;
 		if (!typeInfo) {
-			return WriteRecordString(a_interface, nullptr) &&
+			return WriteRecordString(a_interface, RE::BSFixedString()) &&
 				   WriteRecordT(a_interface, static_cast<Serialization::size_t>(0));
 		}
 
@@ -277,16 +285,23 @@ namespace Internal::Serialization::Serializer
 		const auto vm = RE::GameVM::GetSingleton()->GetVM();
 
 		const auto size = ReadRecordT<Serialization::size_t>(a_interface);
-		const auto type = static_cast<RE::BSScript::TypeInfo::RawType>(
-			a_type - static_cast<Serialization::vm_type_t>(RE::BSScript::TypeInfo::RawType::kArrayStart));
+		const auto typeInfo = RE::BSScript::TypeInfo(static_cast<raw_type_t>(
+			a_type - std::to_underlying(raw_type_t::kArrayStart)));
 
 		auto array = RE::BSTSmartPointer<RE::BSScript::Array>();
-		auto createdArray = vm->CreateArray(type, size, array);
+		auto createdArray = vm->CreateArray(typeInfo, size, array);
 
 		for (auto i = static_cast<Serialization::size_t>(0); i < size; i++) {
-			auto element = ReadRecordVar(a_interface);
-			if (createdArray && Comparer::TypeEquals(&element, &array->elements[i])) {
-				array->elements[i] = std::move(element);
+			const auto var = ReadRecordVar(a_interface);
+
+			if (!createdArray) {
+				continue;
+			}
+
+			auto& element = array->elements[i];
+
+			if (Comparer::TypeEquals(&var, &element)) {
+				element = std::move(var);
 			}
 		}
 

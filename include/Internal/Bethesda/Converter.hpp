@@ -20,8 +20,11 @@ namespace Internal::Converter
 
 	std::string ToString(std::string_view a_value) noexcept;
 	std::string ToString(const RE::BSFixedString& a_value) noexcept;
+
 	std::string ToString(const RE::BSTSmartPointer<RE::BSScript::Object>& a_value);
 	std::string ToString(const RE::BSTSmartPointer<RE::BSScript::Struct>& a_value);
 	std::string ToString(const RE::BSTSmartPointer<RE::BSScript::Array>& a_value);
+
 	std::string ToString(const RE::BSScript::Variable* a_value);
+	std::string ToString(const RE::TESForm* a_value);
 }

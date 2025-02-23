@@ -42,7 +42,6 @@ namespace System::Message
 		});
 
 		data.insert(BUTTONS_KEY, std::move(newButtons));
-
 		return data;
 	}
 

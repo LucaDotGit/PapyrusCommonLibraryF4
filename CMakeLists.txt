@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.30)
 
 set(PROJECT_NAME "PapyrusCommonLibrary")
 set(PROJECT_AUTHOR "SoleVaultBoy")
-set(PROJECT_VERSION 1.6.0.0)
+set(PROJECT_VERSION 1.6.1.0)
 set(PROJECT_LICENSE "MIT License")
 set(PROJECT_DESCRIPTION "${PROJECT_NAME}")
 

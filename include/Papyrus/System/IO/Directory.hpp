@@ -28,7 +28,7 @@ namespace System::IO::Directory
 		auto entryError = std::error_code();
 		auto entries = std::vector<std::string>();
 
-		const auto iterateContent = [&](const auto& a_iterator) noexcept {
+		const auto iterateContent = [&](const auto& a_iterator) {
 			for (const std::filesystem::directory_entry& dirEntry : a_iterator) {
 				if (!a_predicate(dirEntry)) {
 					continue;

@@ -2,6 +2,8 @@
 
 namespace Internal::Comparer
 {
+	using raw_type_t = RE::BSScript::TypeInfo::RawType;
+
 	std::strong_ordering Compare(
 		const RE::BSScript::Variable* a_left,
 		const RE::BSScript::Variable* a_right)
@@ -18,8 +20,8 @@ namespace Internal::Comparer
 		const auto leftType = a_left->GetType().GetRawType();
 		const auto rightType = a_right->GetType().GetRawType();
 
-		const auto isLeftVar = leftType == RE::BSScript::TypeInfo::RawType::kVar;
-		const auto isRightVar = rightType == RE::BSScript::TypeInfo::RawType::kVar;
+		const auto isLeftVar = leftType == raw_type_t::kVar;
+		const auto isRightVar = rightType == raw_type_t::kVar;
 
 		if (isLeftVar && isRightVar) {
 			const auto* left = RE::BSScript::get<RE::BSScript::Variable>(*a_left);
@@ -39,55 +41,55 @@ namespace Internal::Comparer
 		}
 
 		if (leftType != rightType &&
-			leftType != RE::BSScript::TypeInfo::RawType::kArrayVar &&
-			rightType != RE::BSScript::TypeInfo::RawType::kArrayVar) {
+			leftType != raw_type_t::kArrayVar &&
+			rightType != raw_type_t::kArrayVar) {
 			return std::strong_ordering::less;
 		}
 
 		switch (leftType) {
-			case RE::BSScript::TypeInfo::RawType::kBool: {
+			case raw_type_t::kBool: {
 				const auto left = RE::BSScript::get<bool>(*a_left);
 				const auto right = RE::BSScript::get<bool>(*a_right);
 
 				return CompareValue(left, right);
 			}
-			case RE::BSScript::TypeInfo::RawType::kInt: {
+			case raw_type_t::kInt: {
 				const auto left = RE::BSScript::get<std::int32_t>(*a_left);
 				const auto right = RE::BSScript::get<std::int32_t>(*a_right);
 
 				return CompareValue(left, right);
 			}
-			case RE::BSScript::TypeInfo::RawType::kFloat: {
+			case raw_type_t::kFloat: {
 				const auto left = RE::BSScript::get<float>(*a_left);
 				const auto right = RE::BSScript::get<float>(*a_right);
 
 				return CompareValue(left, right);
 			}
-			case RE::BSScript::TypeInfo::RawType::kString: {
+			case raw_type_t::kString: {
 				const auto left = RE::BSScript::get<RE::BSFixedString>(*a_left);
 				const auto right = RE::BSScript::get<RE::BSFixedString>(*a_right);
 
 				return CompareString(left, right);
 			}
-			case RE::BSScript::TypeInfo::RawType::kObject: {
+			case raw_type_t::kObject: {
 				const auto left = RE::BSScript::get<RE::BSScript::Object>(*a_left);
 				const auto right = RE::BSScript::get<RE::BSScript::Object>(*a_right);
 
 				return CompareObject(left, right);
 			}
-			case RE::BSScript::TypeInfo::RawType::kStruct: {
+			case raw_type_t::kStruct: {
 				const auto left = RE::BSScript::get<RE::BSScript::Struct>(*a_left);
 				const auto right = RE::BSScript::get<RE::BSScript::Struct>(*a_right);
 
 				return CompareStruct(left, right);
 			}
-			case RE::BSScript::TypeInfo::RawType::kArrayBool:
-			case RE::BSScript::TypeInfo::RawType::kArrayInt:
-			case RE::BSScript::TypeInfo::RawType::kArrayFloat:
-			case RE::BSScript::TypeInfo::RawType::kArrayString:
-			case RE::BSScript::TypeInfo::RawType::kArrayObject:
-			case RE::BSScript::TypeInfo::RawType::kArrayStruct:
-			case RE::BSScript::TypeInfo::RawType::kArrayVar: {
+			case raw_type_t::kArrayBool:
+			case raw_type_t::kArrayInt:
+			case raw_type_t::kArrayFloat:
+			case raw_type_t::kArrayString:
+			case raw_type_t::kArrayObject:
+			case raw_type_t::kArrayStruct:
+			case raw_type_t::kArrayVar: {
 				const auto left = RE::BSScript::get<RE::BSScript::Array>(*a_left);
 				const auto right = RE::BSScript::get<RE::BSScript::Array>(*a_right);
 
@@ -155,7 +157,7 @@ namespace Internal::Comparer
 			return CompareValue(a_left, a_right);
 		}
 
-		return CompareValue(a_left->formID, a_right->formID);
+		return CompareValue(a_left->GetFormID(), a_right->GetFormID());
 	}
 
 	std::strong_ordering CompareObject(
@@ -170,8 +172,8 @@ namespace Internal::Comparer
 			return CompareValue(a_left.get(), a_right.get());
 		}
 
-		const auto leftHandle = a_left->handle;
-		const auto rightHandle = a_right->handle;
+		const auto leftHandle = a_left->GetHandle();
+		const auto rightHandle = a_right->GetHandle();
 
 		return CompareValue(leftHandle, rightHandle);
 	}
@@ -236,8 +238,8 @@ namespace Internal::Comparer
 		const auto rightType = a_right->elementType.GetRawType();
 
 		if (leftType != rightType &&
-			leftType != RE::BSScript::TypeInfo::RawType::kVar &&
-			rightType != RE::BSScript::TypeInfo::RawType::kVar) {
+			leftType != raw_type_t::kVar &&
+			rightType != raw_type_t::kVar) {
 			return std::strong_ordering::less;
 		}
 
@@ -280,8 +282,8 @@ namespace Internal::Comparer
 		const auto leftType = a_left->GetType().GetRawType();
 		const auto rightType = a_right->GetType().GetRawType();
 
-		const auto isLeftVar = leftType == RE::BSScript::TypeInfo::RawType::kVar;
-		const auto isRightVar = rightType == RE::BSScript::TypeInfo::RawType::kVar;
+		const auto isLeftVar = leftType == raw_type_t::kVar;
+		const auto isRightVar = rightType == raw_type_t::kVar;
 
 		if (isLeftVar && isRightVar) {
 			const auto* left = RE::BSScript::get<RE::BSScript::Variable>(*a_left);
@@ -301,37 +303,37 @@ namespace Internal::Comparer
 		}
 
 		if (leftType != rightType &&
-			leftType != RE::BSScript::TypeInfo::RawType::kArrayVar &&
-			rightType != RE::BSScript::TypeInfo::RawType::kArrayVar) {
+			leftType != raw_type_t::kArrayVar &&
+			rightType != raw_type_t::kArrayVar) {
 			return false;
 		}
 
 		switch (leftType) {
-			case RE::BSScript::TypeInfo::RawType::kString: {
+			case raw_type_t::kString: {
 				const auto left = RE::BSScript::get<RE::BSFixedString>(*a_left);
 				const auto right = RE::BSScript::get<RE::BSFixedString>(*a_right);
 
 				return left == right;
 			}
-			case RE::BSScript::TypeInfo::RawType::kObject: {
+			case raw_type_t::kObject: {
 				const auto left = RE::BSScript::get<RE::BSScript::Object>(*a_left);
 				const auto right = RE::BSScript::get<RE::BSScript::Object>(*a_right);
 
 				return left == right;
 			}
-			case RE::BSScript::TypeInfo::RawType::kStruct: {
+			case raw_type_t::kStruct: {
 				const auto left = RE::BSScript::get<RE::BSScript::Struct>(*a_left);
 				const auto right = RE::BSScript::get<RE::BSScript::Struct>(*a_right);
 
 				return left == right;
 			}
-			case RE::BSScript::TypeInfo::RawType::kArrayBool:
-			case RE::BSScript::TypeInfo::RawType::kArrayInt:
-			case RE::BSScript::TypeInfo::RawType::kArrayFloat:
-			case RE::BSScript::TypeInfo::RawType::kArrayString:
-			case RE::BSScript::TypeInfo::RawType::kArrayObject:
-			case RE::BSScript::TypeInfo::RawType::kArrayStruct:
-			case RE::BSScript::TypeInfo::RawType::kArrayVar: {
+			case raw_type_t::kArrayBool:
+			case raw_type_t::kArrayInt:
+			case raw_type_t::kArrayFloat:
+			case raw_type_t::kArrayString:
+			case raw_type_t::kArrayObject:
+			case raw_type_t::kArrayStruct:
+			case raw_type_t::kArrayVar: {
 				const auto left = RE::BSScript::get<RE::BSScript::Array>(*a_left);
 				const auto right = RE::BSScript::get<RE::BSScript::Array>(*a_right);
 
@@ -367,8 +369,8 @@ namespace Internal::Comparer
 		const auto leftRawType = leftType.GetRawType();
 		const auto rightRawType = rightType.GetRawType();
 
-		const auto isLeftVar = leftRawType == RE::BSScript::TypeInfo::RawType::kVar;
-		const auto isRightVar = rightRawType == RE::BSScript::TypeInfo::RawType::kVar;
+		const auto isLeftVar = leftRawType == raw_type_t::kVar;
+		const auto isRightVar = rightRawType == raw_type_t::kVar;
 
 		if (isLeftVar && isRightVar) {
 			const auto* left = RE::BSScript::get<RE::BSScript::Variable>(*a_left);
@@ -397,10 +399,10 @@ namespace Internal::Comparer
 		return leftComplexType == rightComplexType;
 	}
 
-	RE::BSScript::TypeInfo::RawType GetRawType(const RE::BSScript::Variable* a_var)
+	raw_type_t GetRawType(const RE::BSScript::Variable* a_var)
 	{
 		if (!a_var) {
-			return RE::BSScript::TypeInfo::RawType::kNone;
+			return raw_type_t::kNone;
 		}
 
 		if (a_var->is<RE::BSScript::Variable>()) {

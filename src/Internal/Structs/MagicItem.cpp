@@ -53,18 +53,22 @@ namespace Internal::MagicItem
 		oldEntries.resize(static_cast<std::uint32_t>(newSize));
 
 		for (auto i = 0ui32; i < newSize; i++) {
+			const auto& entry = a_entries[i];
+			if (!entry) {
+				continue;
+			}
+
 			auto*& element = oldEntries[i];
 			if (!element) {
 				element = new RE::EffectItem();
 			}
 
-			const auto& entry = a_entries[i];
 			auto& effectData = element->data;
 
 			element->effectSetting = entry.find<RE::EffectSetting*>(EFFECT_KEY).value_or(nullptr);
-			effectData.magnitude = entry.find<float>(MAGNITUDE_KEY).value_or(0.0f);
-			effectData.area = entry.find<std::int32_t>(AREA_KEY).value_or(0);
-			effectData.duration = entry.find<std::int32_t>(DURATION_KEY).value_or(0);
+			effectData.magnitude = entry.find<float>(MAGNITUDE_KEY).value();
+			effectData.area = entry.find<std::int32_t>(AREA_KEY).value();
+			effectData.duration = entry.find<std::int32_t>(DURATION_KEY).value();
 		}
 	}
 }

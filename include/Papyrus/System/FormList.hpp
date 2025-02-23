@@ -78,7 +78,7 @@ namespace System::FormList
 
 			for (auto i = 0ui32; i < newScriptFormSize; i++) {
 				const auto* form = newScriptForms[i];
-				const auto formID = form ? form->formID : 0;
+				const auto formID = form ? form->GetFormID() : 0;
 
 				(*oldScriptForms)[i] = formID;
 			}

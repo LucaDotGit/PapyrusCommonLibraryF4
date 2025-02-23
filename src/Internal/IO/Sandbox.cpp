@@ -7,7 +7,7 @@ namespace Internal::Sandbox
 		auto root = std::filesystem::current_path(error);
 
 		if (error) {
-			F4SE::stl::report_and_fail(error.message());
+			stl::report_and_fail(error.message());
 		}
 
 		return root;

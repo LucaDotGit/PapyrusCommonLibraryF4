@@ -38,7 +38,7 @@ namespace System::Structure
 
 		for (const auto& [name, index] : varMap) {
 			const auto& var = typeInfo->variables[index];
-			const auto* value = ::Internal::Copier::CopyVar(&var.initialValue);
+			const auto* value = new RE::BSScript::Variable(var.initialValue);
 
 			auto pair = ::Internal::Pairs::MakePair(name, value);
 			variables.push_back(std::move(pair));
@@ -69,7 +69,7 @@ namespace System::Structure
 
 		for (const auto& [name, index] : typeInfo->varNameIndexMap) {
 			const auto& var = structure->variables[index];
-			const auto* value = ::Internal::Copier::CopyVar(&var);
+			const auto* value = new RE::BSScript::Variable(var);
 
 			auto pair = ::Internal::Pairs::MakePair(name, value);
 			variables.push_back(std::move(pair));
@@ -104,7 +104,7 @@ namespace System::Structure
 			}
 
 			const auto& var = structure->variables[nameIt->second];
-			const auto* value = ::Internal::Copier::CopyVar(&var);
+			const auto* value = new RE::BSScript::Variable(var);
 			variables.push_back(value);
 		}
 

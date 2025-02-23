@@ -58,7 +58,8 @@ namespace System::Potion
 		potionData.addictionItem = a_data.find<RE::SpellItem*>(ADDICTION_KEY).value_or(nullptr);
 		potionData.addictionChance = a_data.find<float>(ADDICTION_CHANCE_KEY).value();
 		potionData.addictionName = a_data.find<RE::BGSLocalizedString>(ADDICTION_NAME_KEY).value();
-		::Internal::MagicItem::SetEntries(a_potion, a_data.find<std::vector<::Internal::MagicItem::Entry>>(EFFECTS_KEY).value_or(std::vector<::Internal::MagicItem::Entry>()));
+		::Internal::MagicItem::SetEntries(a_potion, a_data.find<std::vector<::Internal::MagicItem::Entry>>(EFFECTS_KEY)
+														.value_or(std::vector<::Internal::MagicItem::Entry>()));
 	}
 
 	static bool RegisterFunctions(RE::BSScript::IVirtualMachine* a_vm)

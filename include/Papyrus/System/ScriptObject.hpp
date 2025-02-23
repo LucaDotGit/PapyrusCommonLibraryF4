@@ -70,7 +70,7 @@ namespace System::ScriptObject
 		const auto* vm = RE::BSScript::Internal::VirtualMachine::GetSingleton();
 
 		const auto lock = RE::BSAutoLock{ vm->eventRelayLock };
-		const auto scriptIt = vm->eventRelays.find(a_sender->handle);
+		const auto scriptIt = vm->eventRelays.find(a_sender->GetHandle());
 
 		if (scriptIt == vm->eventRelays.end()) {
 			return false;

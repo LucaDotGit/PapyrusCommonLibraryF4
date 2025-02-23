@@ -1,10 +1,13 @@
 #include "Internal/Patches/EditorIDCache.hpp"
 
+#include "Internal/Bethesda/Converter.hpp"
 #include "Internal/Config/Config.hpp"
 
 namespace Internal::Patches::EditorIDCache
 {
 	static constexpr auto RESERVED_SIZE = 0x20000ui32;
+
+	static auto EditorIDs = std::unordered_map<RE::TESFormID, RE::BSFixedString>();
 
 	void Install() noexcept
 	{
@@ -35,7 +38,7 @@ namespace Internal::Patches::EditorIDCache
 		Patch<RE::TESSound>::Install();
 		Patch<RE::BGSAcousticSpace>::Install();
 		Patch<RE::EffectSetting>::Install();
-		// Patch<RE::Script>::Install(); // Not needed
+		Patch<RE::Script>::Install();
 		Patch<RE::TESLandTexture>::Install();
 		Patch<RE::EnchantmentItem>::Install();
 		Patch<RE::SpellItem>::Install();
@@ -75,7 +78,7 @@ namespace Internal::Patches::EditorIDCache
 		Patch<RE::BGSShaderParticleGeometryData>::Install();
 		Patch<RE::BGSReferenceEffect>::Install();
 		Patch<RE::TESRegion>::Install();
-		// Patch<RE::NavMeshInfoMap>::Install(); // Has no EditorIDs
+		Patch<RE::NavMeshInfoMap>::Install();
 		Patch<RE::TESObjectCELL>::Install();
 		Patch<RE::TESObjectREFR>::Install();
 		Patch<RE::Explosion>::Install();
@@ -91,8 +94,8 @@ namespace Internal::Patches::EditorIDCache
 		Patch<RE::BarrierProjectile>::Install();
 		Patch<RE::Hazard>::Install();
 		Patch<RE::TESWorldSpace>::Install();
-		// Patch<RE::TESObjectLAND>::Install(); // Has no EditorIDs
-		// Patch<RE::NavMesh>::Install(); // Has no EditorIDs
+		Patch<RE::TESObjectLAND>::Install();
+		Patch<RE::NavMesh>::Install();
 		Patch<RE::TESTopic>::Install();
 		Patch<RE::TESTopicInfo>::Install();
 		Patch<RE::TESQuest>::Install();
@@ -105,7 +108,7 @@ namespace Internal::Patches::EditorIDCache
 		Patch<RE::TrespassPackage>::Install();
 		Patch<RE::TESCombatStyle>::Install();
 		Patch<RE::TESLoadScreen>::Install();
-		Patch<RE::TESLevSpell>::Install();
+		// Patch<RE::TESLevSpell>::Install(); // Unused
 		Patch<RE::TESObjectANIO>::Install();
 		Patch<RE::TESWaterForm>::Install();
 		Patch<RE::TESEffectShader>::Install();
@@ -128,15 +131,15 @@ namespace Internal::Patches::EditorIDCache
 		Patch<RE::BGSEncounterZone>::Install();
 		Patch<RE::BGSLocation>::Install();
 		Patch<RE::BGSMessage>::Install();
-		// Patch<RE::BGSDefaultObjectManager>::Install(); // Has no EditorIDs
+		Patch<RE::BGSDefaultObjectManager>::Install();
 		Patch<RE::BGSDefaultObject>::Install();
 		Patch<RE::BGSLightingTemplate>::Install();
 		Patch<RE::BGSMusicType>::Install();
 		Patch<RE::BGSFootstep>::Install();
 		Patch<RE::BGSFootstepSet>::Install();
-		// Patch<RE::BGSStoryManagerBranchNode>::Install(); // Not needed
-		// Patch<RE::BGSStoryManagerQuestNode>::Install(); // Not needed
-		// Patch<RE::BGSStoryManagerEventNode>::Install(); // Not needed
+		Patch<RE::BGSStoryManagerBranchNode>::Install();
+		Patch<RE::BGSStoryManagerQuestNode>::Install();
+		Patch<RE::BGSStoryManagerEventNode>::Install();
 		Patch<RE::BGSDialogueBranch>::Install();
 		Patch<RE::BGSMusicTrackFormWrapper>::Install();
 		// Patch<RE::TESWordOfPower>::Install(); // Unused
@@ -150,7 +153,7 @@ namespace Internal::Patches::EditorIDCache
 		Patch<RE::BGSMaterialObject>::Install();
 		Patch<RE::BGSMovementType>::Install();
 		Patch<RE::BGSSoundDescriptorForm>::Install();
-		Patch<RE::BGSDualCastData>::Install();
+		// Patch<RE::BGSDualCastData>::Install(); // Unused
 		Patch<RE::BGSSoundCategory>::Install();
 		Patch<RE::BGSSoundOutput>::Install();
 		Patch<RE::BGSCollisionLayer>::Install();
@@ -177,7 +180,7 @@ namespace Internal::Patches::EditorIDCache
 		const auto&& [_, mutex] = RE::TESForm::GetAllFormsByEditorID();
 		const auto lock = RE::BSAutoReadLock{ mutex.get() };
 
-		const auto formIt = EditorIDs.find(a_this->formID);
+		const auto formIt = EditorIDs.find(a_this->GetFormID());
 		return formIt != EditorIDs.end() ? formIt->second.data() : "";
 	}
 
@@ -187,7 +190,9 @@ namespace Internal::Patches::EditorIDCache
 			return false;
 		}
 
+		const auto formID = a_this->GetFormID();
 		const auto editorID = RE::BSFixedString(a_editorID);
+
 		if (editorID.empty()) {
 			return false;
 		}
@@ -195,32 +200,23 @@ namespace Internal::Patches::EditorIDCache
 		const auto&& [map, mutex] = RE::TESForm::GetAllFormsByEditorID();
 		const auto lock = RE::BSAutoWriteLock{ mutex.get() };
 
-		const auto idIt = map->find(editorID);
-		if (idIt != map->end()) {
-			if (!Config::LogDuplicateEditorIDs.GetValue()) {
-				return false;
-			}
+		const auto&& [it, hasInserted] = map->emplace(editorID, a_this);
+		EditorIDs[formID] = editorID;
 
-			const auto thisFormID = a_this->formID;
-			const auto otherFormID = idIt->second->formID;
+		if (hasInserted) {
+			return true;
+		}
 
-			if (thisFormID != otherFormID) {
-				logger::warn("Duplicate EditorID - Sender: {:08X}, Owner: {:08X}, ID: \"{}\""sv, thisFormID, otherFormID, a_editorID);
-			}
-
+		if (!Config::LogDuplicateEditorIDs.GetValue()) {
 			return false;
 		}
 
-		const auto formID = a_this->formID;
-		const auto formIt = EditorIDs.find(formID);
-
-		if (formIt != EditorIDs.end()) {
-			map->erase(formIt->second);
-			EditorIDs.erase(formIt);
+		const auto ownerFormID = it->second->GetFormID();
+		if (formID == ownerFormID) {
+			return false;
 		}
 
-		map->emplace(editorID, a_this);
-		EditorIDs.emplace(formID, editorID);
-		return true;
+		logger::warn("Duplicate EditorID - Sender: {:08X}, Owner: {:08X}, ID: \"{}\""sv, formID, ownerFormID, editorID);
+		return false;
 	}
 }

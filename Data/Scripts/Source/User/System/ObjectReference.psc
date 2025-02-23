@@ -42,9 +42,6 @@ EndStruct
 MapMarkerData Function GetMapMarkerData(ObjectReference akMarkerRef) Global Native
 bool Function SetMapMarkerData(ObjectReference akMarkerRef, MapMarkerData akData) Global Native
 
-bool Function GetIsFullLOD(ObjectReference akRef) Global Native
-Function SetIsFullLOD(ObjectReference akRef, bool abValue) Global Native
-
 ObjectReference Function GetDroppedItemSource(ObjectReference akItemRef) Global Native
 ObjectReference Function GetAshPileSource(ObjectReference akAshPileRef) Global Native
 

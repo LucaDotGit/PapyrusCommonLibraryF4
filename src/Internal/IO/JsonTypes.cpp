@@ -26,6 +26,11 @@ namespace Internal::JsonTypes::detail
 			auto& element = structure->variables[keyIt->second];
 			auto var = value.get<RE::BSScript::Variable>();
 
+			if (element.is<RE::BSScript::Variable>() && !var.is<RE::BSScript::Variable>()) {
+				element = new RE::BSScript::Variable(var);
+				continue;
+			}
+
 			if (Comparer::TypeEquals(&var, &element)) {
 				element = std::move(var);
 			}
@@ -71,8 +76,8 @@ void adl_serializer<RE::TESForm*>::to_json(json_t& a_node, const RE::TESForm* a_
 		return;
 	}
 
-	a_node[FORM_MOD_NAME] = mod->filename;
-	a_node[FORMTYPE] = a_form->GetLocalFormID();
+	a_node[MOD_NAME_KEY] = mod->filename;
+	a_node[FORM_ID_KEY] = a_form->GetLocalFormID();
 }
 
 void adl_serializer<RE::TESForm*>::from_json(const json_t& a_node, RE::TESForm*& a_form)
@@ -82,13 +87,13 @@ void adl_serializer<RE::TESForm*>::from_json(const json_t& a_node, RE::TESForm*&
 		return;
 	}
 
-	const auto nameIt = a_node.find(FORM_MOD_NAME);
+	const auto nameIt = a_node.find(MOD_NAME_KEY);
 	if (nameIt == a_node.end() || !nameIt->is_string()) {
 		a_form = nullptr;
 		return;
 	}
 
-	const auto formIt = a_node.find(FORMTYPE);
+	const auto formIt = a_node.find(FORM_ID_KEY);
 	if (formIt == a_node.end() || !formIt->is_number_unsigned()) {
 		a_form = nullptr;
 		return;
@@ -110,8 +115,8 @@ void adl_serializer<RE::BSTSmartPointer<RE::BSScript::Struct>>::to_json(
 		return;
 	}
 
-	a_node[STRUCT_NAME] = a_struct->type->name;
-	a_node[STRUCT_VARIABLES] = Internal::JsonTypes::detail::SetStruct(a_struct);
+	a_node[STRUCT_NAME_KEY] = a_struct->type->name;
+	a_node[VARIABLES_KEY] = Internal::JsonTypes::detail::SetStruct(a_struct);
 }
 
 void adl_serializer<RE::BSTSmartPointer<RE::BSScript::Struct>>::from_json(
@@ -123,13 +128,13 @@ void adl_serializer<RE::BSTSmartPointer<RE::BSScript::Struct>>::from_json(
 		return;
 	}
 
-	const auto nameIt = a_node.find(STRUCT_NAME);
+	const auto nameIt = a_node.find(STRUCT_NAME_KEY);
 	if (nameIt == a_node.end() || !nameIt->is_string()) {
 		a_struct = nullptr;
 		return;
 	}
 
-	const auto varIt = a_node.find(STRUCT_VARIABLES);
+	const auto varIt = a_node.find(VARIABLES_KEY);
 	if (varIt == a_node.end() || !varIt->is_object()) {
 		a_struct = nullptr;
 		return;
@@ -161,8 +166,8 @@ void adl_serializer<RE::BSTSmartPointer<RE::BSScript::Array>>::to_json(
 	a_node = json_t::array();
 	a_node.get_ref<json_t::array_t&>().reserve(a_array->elements.size());
 
-	for (const auto& var : a_array->elements) {
-		a_node.push_back(var);
+	for (const auto& element : a_array->elements) {
+		a_node.push_back(element);
 	}
 }
 
@@ -175,38 +180,66 @@ void adl_serializer<RE::BSTSmartPointer<RE::BSScript::Array>>::from_json(
 		return;
 	}
 
-	constexpr auto DEFAULT_TYPE = RE::BSScript::TypeInfo::RawType::kVar;
+	const auto defaultType = RE::BSScript::TypeInfo(RE::BSScript::TypeInfo::RawType::kVar);
 
 	const auto size = static_cast<std::uint32_t>(a_node.size());
 	const auto vm = RE::GameVM::GetSingleton()->GetVM();
 
-	if (!vm->CreateArray(DEFAULT_TYPE, size, a_array)) {
+	if (!vm->CreateArray(defaultType, size, a_array)) {
 		a_array = nullptr;
 		return;
 	}
 
-	auto elementType = a_array->elementType;
-	auto isFirst = true;
+	auto currentType = std::optional<RE::BSScript::TypeInfo>();
 
 	for (auto i = 0ui32; i < size; i++) {
-		auto value = a_node[i].get<RE::BSScript::Variable>();
-		if (!value) {
+		auto element = a_node[i].get<RE::BSScript::Variable>();
+		if (!element) {
 			continue;
 		}
 
-		auto currentType = value.GetType();
-		if (isFirst) {
-			elementType = currentType;
-			isFirst = false;
+		if (!currentType.has_value()) {
+			currentType = element.GetType();
 		}
-		else if (!Internal::Comparer::TypeEquals(currentType, elementType)) {
-			elementType = DEFAULT_TYPE;
+		else if (!Internal::Comparer::TypeEquals(element.GetType(), currentType.value())) {
+			currentType = defaultType;
 		}
 
-		a_array->elements[i] = std::move(value);
+		a_array->elements[i] = std::move(element);
 	}
 
-	a_array->elementType = elementType;
+	a_array->elementType = currentType.value_or(defaultType);
+}
+
+void adl_serializer<RE::BSScript::Variable*>::to_json(
+	json_t& a_node,
+	const RE::BSScript::Variable* a_var)
+{
+	if (!a_var || !*a_var) {
+		a_node = nullptr;
+		return;
+	}
+
+	a_node[VARIABLE_KEY] = *a_var;
+}
+
+void adl_serializer<RE::BSScript::Variable*>::from_json(
+	const json_t& a_node,
+	RE::BSScript::Variable*& a_var)
+{
+	if (a_node.empty() || !a_node.is_object()) {
+		a_var = nullptr;
+		return;
+	}
+
+	const auto varIt = a_node.find(VARIABLE_KEY);
+	if (varIt == a_node.end()) {
+		a_var = nullptr;
+		return;
+	}
+
+	auto value = varIt->get<RE::BSScript::Variable>();
+	a_var = new RE::BSScript::Variable(value);
 }
 
 void adl_serializer<RE::BSScript::Variable>::to_json(
@@ -218,48 +251,44 @@ void adl_serializer<RE::BSScript::Variable>::to_json(
 		return;
 	}
 
+	using raw_type_t = RE::BSScript::TypeInfo::RawType;
+
 	switch (a_var.GetType().GetRawType()) {
-		case RE::BSScript::TypeInfo::RawType::kBool: {
+		case raw_type_t::kBool: {
 			a_node = RE::BSScript::get<bool>(a_var);
 			break;
 		}
-		case RE::BSScript::TypeInfo::RawType::kInt: {
+		case raw_type_t::kInt: {
 			a_node = RE::BSScript::get<std::int32_t>(a_var);
 			break;
 		}
-		case RE::BSScript::TypeInfo::RawType::kFloat: {
+		case raw_type_t::kFloat: {
 			a_node = RE::BSScript::get<float>(a_var);
 			break;
 		}
-		case RE::BSScript::TypeInfo::RawType::kString: {
+		case raw_type_t::kString: {
 			a_node = RE::BSScript::get<RE::BSFixedString>(a_var);
 			break;
 		}
-		case RE::BSScript::TypeInfo::RawType::kObject: {
+		case raw_type_t::kObject: {
 			a_node = RE::BSScript::UnpackVariable<RE::TESForm>(a_var);
 			break;
 		}
-		case RE::BSScript::TypeInfo::RawType::kStruct: {
+		case raw_type_t::kStruct: {
 			a_node = RE::BSScript::get<RE::BSScript::Struct>(a_var);
 			break;
 		}
-		case RE::BSScript::TypeInfo::RawType::kVar: {
-			const auto* var = RE::BSScript::get<RE::BSScript::Variable>(a_var);
-			if (var) {
-				a_node = *var;
-			}
-			else {
-				a_node = nullptr;
-			}
+		case raw_type_t::kVar: {
+			a_node = RE::BSScript::get<RE::BSScript::Variable>(a_var);
 			break;
 		}
-		case RE::BSScript::TypeInfo::RawType::kArrayBool:
-		case RE::BSScript::TypeInfo::RawType::kArrayInt:
-		case RE::BSScript::TypeInfo::RawType::kArrayFloat:
-		case RE::BSScript::TypeInfo::RawType::kArrayString:
-		case RE::BSScript::TypeInfo::RawType::kArrayObject:
-		case RE::BSScript::TypeInfo::RawType::kArrayStruct:
-		case RE::BSScript::TypeInfo::RawType::kArrayVar: {
+		case raw_type_t::kArrayBool:
+		case raw_type_t::kArrayInt:
+		case raw_type_t::kArrayFloat:
+		case raw_type_t::kArrayString:
+		case raw_type_t::kArrayObject:
+		case raw_type_t::kArrayStruct:
+		case raw_type_t::kArrayVar: {
 			a_node = RE::BSScript::get<RE::BSScript::Array>(a_var);
 			break;
 		}
@@ -303,6 +332,12 @@ void adl_serializer<RE::BSScript::Variable>::from_json(
 			break;
 		}
 		case json::value_t::object: {
+			auto* var = a_node.get<RE::BSScript::Variable*>();
+			if (var) {
+				a_var = var;
+				break;
+			}
+
 			const auto* form = a_node.get<RE::TESForm*>();
 			if (form) {
 				RE::BSScript::PackVariable(a_var, form);
@@ -312,9 +347,7 @@ void adl_serializer<RE::BSScript::Variable>::from_json(
 			const auto structure = a_node.get<RE::BSTSmartPointer<RE::BSScript::Struct>>();
 			if (structure) {
 				a_var = structure;
-			}
-			else {
-				a_var = nullptr;
+				break;
 			}
 			break;
 		}

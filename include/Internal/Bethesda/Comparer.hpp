@@ -27,6 +27,7 @@ namespace Internal::Comparer
 		const RE::BSScript::Variable* a_max);
 
 	template <typename T>
+		requires std::is_trivially_copyable_v<std::remove_cvref_t<T>>
 	[[nodiscard]] std::strong_ordering CompareValue(T&& a_left, T&& a_right) noexcept
 	{
 		if (a_left < a_right) {
@@ -42,8 +43,7 @@ namespace Internal::Comparer
 
 	template <typename TLeft, typename TRight>
 		requires std::same_as<typename TLeft::value_type, typename TRight::value_type> &&
-				 std::convertible_to<TLeft, std::basic_string_view<typename TLeft::value_type>> &&
-				 std::convertible_to<TRight, std::basic_string_view<typename TRight::value_type>>
+				 (std::same_as<typename TLeft::value_type, char> || std::same_as<typename TLeft::value_type, wchar_t>)
 	[[nodiscard]] std::strong_ordering CompareString(const TLeft& a_left, const TRight& a_right) noexcept
 	{
 		const auto leftSize = a_left.size();
@@ -53,16 +53,12 @@ namespace Internal::Comparer
 			return CompareValue(leftSize, rightSize);
 		}
 
-		for (auto i = 0ui32; i < leftSize; i++) {
-			const auto leftChar = std::tolower(a_left[i]);
-			const auto rightChar = std::tolower(a_right[i]);
-
-			if (leftChar != rightChar) {
-				return CompareValue(leftChar, rightChar);
-			}
+		if constexpr (std::same_as<typename TLeft::value_type, char>) {
+			return _strnicmp(a_left.data(), a_right.data(), leftSize) <=> 0;
 		}
-
-		return std::strong_ordering::equal;
+		else {
+			return _wcsnicmp(a_left.data(), a_right.data(), leftSize) <=> 0;
+		}
 	}
 
 	[[nodiscard]] std::strong_ordering CompareForm(

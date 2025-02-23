@@ -386,7 +386,7 @@ namespace System::Game
 	static RE::TESObjectREFR* GetCurrentCrosshairRef(std::monostate)
 	{
 		const auto* refHandler = ::Internal::CrosshairRefHandler::GetSingleton();
-		const auto refHandle = refHandler->GetCurrentRef();
+		const auto& refHandle = refHandler->GetCurrentRef();
 		return refHandle ? refHandle.get().get() : nullptr;
 	}
 
@@ -399,7 +399,7 @@ namespace System::Game
 	static RE::TESObjectREFR* GetLastUsedPowerArmor(std::monostate)
 	{
 		const auto* player = RE::PlayerCharacter::GetSingleton();
-		const auto refHandle = player->lastUsedPowerArmor;
+		const auto& refHandle = player->lastUsedPowerArmor;
 		return refHandle ? refHandle.get().get() : nullptr;
 	}
 

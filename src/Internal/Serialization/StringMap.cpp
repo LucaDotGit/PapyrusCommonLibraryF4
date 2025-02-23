@@ -138,13 +138,15 @@ namespace Internal::Serialization::StringMap
 
 	bool AddVar(const RE::BSScript::Variable& a_var)
 	{
+		using raw_type_t = RE::BSScript::TypeInfo::RawType;
+
 		switch (a_var.GetType().GetRawType()) {
-			case RE::BSScript::TypeInfo::RawType::kString: {
+			case raw_type_t::kString: {
 				const auto value = RE::BSScript::get<RE::BSFixedString>(a_var);
 				AddString(value);
 				break;
 			}
-			case RE::BSScript::TypeInfo::RawType::kStruct: {
+			case raw_type_t::kStruct: {
 				const auto value = RE::BSScript::get<RE::BSScript::Struct>(a_var);
 				if (!value) {
 					AddString(RE::BSFixedString());
@@ -170,7 +172,7 @@ namespace Internal::Serialization::StringMap
 				}
 				break;
 			}
-			case RE::BSScript::TypeInfo::RawType::kVar: {
+			case raw_type_t::kVar: {
 				const auto* value = RE::BSScript::get<RE::BSScript::Variable>(a_var);
 				if (!value) {
 					return false;
@@ -179,9 +181,9 @@ namespace Internal::Serialization::StringMap
 				AddVar(*value);
 				break;
 			}
-			case RE::BSScript::TypeInfo::RawType::kArrayString:
-			case RE::BSScript::TypeInfo::RawType::kArrayStruct:
-			case RE::BSScript::TypeInfo::RawType::kArrayVar: {
+			case raw_type_t::kArrayString:
+			case raw_type_t::kArrayStruct:
+			case raw_type_t::kArrayVar: {
 				const auto value = RE::BSScript::get<RE::BSScript::Array>(a_var);
 				if (!value) {
 					return false;

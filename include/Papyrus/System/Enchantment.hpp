@@ -61,7 +61,8 @@ namespace System::Enchantment
 		enchantmentData.chargeTime = a_data.find<float>(CHARGE_TIME_KEY).value();
 		enchantmentData.baseEnchantment = a_data.find<RE::EnchantmentItem*>(BASE_ENCHANTMENT_KEY).value_or(nullptr);
 		enchantmentData.wornRestrictions = a_data.find<RE::BGSListForm*>(WORN_RESTRICTIONS_KEY).value_or(nullptr);
-		::Internal::MagicItem::SetEntries(a_enchantment, a_data.find<std::vector<::Internal::MagicItem::Entry>>(EFFECTS_KEY).value_or(std::vector<::Internal::MagicItem::Entry>()));
+		::Internal::MagicItem::SetEntries(a_enchantment, a_data.find<std::vector<::Internal::MagicItem::Entry>>(EFFECTS_KEY)
+															 .value_or(std::vector<::Internal::MagicItem::Entry>()));
 	}
 
 	static bool RegisterFunctions(RE::BSScript::IVirtualMachine* a_vm)

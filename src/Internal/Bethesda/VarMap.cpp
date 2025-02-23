@@ -47,9 +47,9 @@ namespace Internal
 		auto values = std::vector<const RE::BSScript::Variable*>();
 		values.reserve(nameIt->second.size());
 
-		for (const auto& [_, var] : nameIt->second) {
-			const auto value = Copier::CopyVar(&var);
-			values.push_back(value);
+		for (const auto& [_, value] : nameIt->second) {
+			const auto* var = new RE::BSScript::Variable(value);
+			values.push_back(var);
 		}
 
 		return values;
@@ -67,10 +67,10 @@ namespace Internal
 		auto pairs = std::vector<Pairs::Pair>();
 		pairs.reserve(nameIt->second.size());
 
-		for (const auto& [name, var] : nameIt->second) {
-			const auto* value = Copier::CopyVar(&var);
+		for (const auto& [name, value] : nameIt->second) {
+			const auto* var = new RE::BSScript::Variable(value);
 
-			auto pair = Pairs::MakePair(name, value);
+			auto pair = Pairs::MakePair(name, var);
 			pairs.push_back(std::move(pair));
 		}
 
@@ -131,7 +131,7 @@ namespace Internal
 			return nullptr;
 		}
 
-		return Copier::CopyVar(&keyIt->second);
+		return new RE::BSScript::Variable(keyIt->second);
 	}
 
 	const RE::BSScript::Variable* VarMap::GetValueOrDefault(
@@ -151,7 +151,7 @@ namespace Internal
 			return Copier::CopyVar(a_default);
 		}
 
-		return Copier::CopyVar(&keyIt->second);
+		return new RE::BSScript::Variable(keyIt->second);
 	}
 
 	bool VarMap::SetValue(

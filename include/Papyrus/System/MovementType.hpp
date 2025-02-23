@@ -86,11 +86,14 @@ namespace System::MovementType
 
 		const auto setEntry = [&](std::string_view a_key, std::span<float, MaxSpeeds::kTotal> a_speeds) noexcept {
 			const auto entry = a_data.find<Entry>(a_key).value_or(nullptr);
+			if (!entry) {
+				return;
+			}
 
-			a_speeds[MaxSpeeds::kStanding] = entry.find<float>(STANDING_KEY).value_or(0.0f);
-			a_speeds[MaxSpeeds::kWalking] = entry.find<float>(WALKING_KEY).value_or(0.0f);
-			a_speeds[MaxSpeeds::kRunning] = entry.find<float>(RUNNING_KEY).value_or(0.0f);
-			a_speeds[MaxSpeeds::kSprinting] = entry.find<float>(SPRINTING_KEY).value_or(0.0f);
+			a_speeds[MaxSpeeds::kStanding] = entry.find<float>(STANDING_KEY).value();
+			a_speeds[MaxSpeeds::kWalking] = entry.find<float>(WALKING_KEY).value();
+			a_speeds[MaxSpeeds::kRunning] = entry.find<float>(RUNNING_KEY).value();
+			a_speeds[MaxSpeeds::kSprinting] = entry.find<float>(SPRINTING_KEY).value();
 		};
 
 		movementTypeData.typeName = a_data.find<RE::BSFixedString>(NAME_KEY).value();

@@ -25,15 +25,15 @@ namespace Internal::Creator
 		const RE::BSFixedString& a_name,
 		const RE::BSScript::Variable* a_value);
 
-	[[nodiscard]] RE::BSScript::Variable GetDefaultValue(const RE::BSScript::TypeInfo& a_typeInfo) noexcept;
+	[[nodiscard]] RE::BSScript::Variable GetDefaultValue(const RE::BSScript::TypeInfo& a_typeInfo);
 	[[nodiscard]] RE::BSScript::ObjectTypeInfo::NamedStateInfo* GetDefaultState(
-		const RE::BSTSmartPointer<RE::BSScript::ObjectTypeInfo>& a_typeInfo) noexcept;
+		const RE::BSTSmartPointer<RE::BSScript::ObjectTypeInfo>& a_typeInfo);
 
 	RE::BSContainer::ForEachResult ForEachVariable(
 		const RE::BSTSmartPointer<RE::BSScript::ObjectTypeInfo>& a_typeInfo,
-		std::function<RE::BSContainer::ForEachResult(RE::BSScript::ObjectTypeInfo::VariableInfo&, std::uint32_t)> a_function) noexcept;
+		std::function<RE::BSContainer::ForEachResult(RE::BSScript::ObjectTypeInfo::VariableInfo&, std::uint32_t)> a_function);
 
 	RE::BSContainer::ForEachResult ForEachProperty(
 		const RE::BSTSmartPointer<RE::BSScript::ObjectTypeInfo>& a_typeInfo,
-		std::function<RE::BSContainer::ForEachResult(RE::BSScript::ObjectTypeInfo::PropertyInfo&)> a_function) noexcept;
+		std::function<RE::BSContainer::ForEachResult(RE::BSScript::ObjectTypeInfo::PropertyInfo&)> a_function);
 }

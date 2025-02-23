@@ -168,13 +168,10 @@ namespace Internal::Translator
 		}
 
 		auto& translationMap = translator->translationMap;
-		auto keyIt = translationMap.find(a_key);
+		auto&& [it, hasInserted] = translationMap.emplace(a_key, a_value);
 
-		if (keyIt != translationMap.end()) {
-			keyIt->second = a_value;
-		}
-		else {
-			translationMap.emplace(a_key, a_value);
+		if (!hasInserted) {
+			it->second = a_value;
 		}
 
 		return true;
@@ -217,14 +214,8 @@ namespace Internal::Translator
 		}
 
 		auto& translationMap = translator->translationMap;
-		auto keyIt = translationMap.find(a_key);
-
-		if (keyIt != translationMap.end()) {
-			return false;
-		}
-
-		translationMap.emplace(a_key, a_value);
-		return true;
+		auto&& [_, hasInserted] = translationMap.emplace(a_key, a_value);
+		return hasInserted;
 	}
 
 	bool Remove(std::string_view a_key)

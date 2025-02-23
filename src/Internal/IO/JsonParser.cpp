@@ -190,7 +190,7 @@ namespace Internal::JsonParser
 		std::string_view a_key)
 	{
 		const auto var = GetT(a_path, a_key, RE::BSScript::Variable());
-		return Copier::CopyVar(&var);
+		return new RE::BSScript::Variable(var);
 	}
 
 	bool SetVar(
@@ -217,7 +217,7 @@ namespace Internal::JsonParser
 
 		for (const auto& element : node) {
 			const auto var = element.get<RE::BSScript::Variable>();
-			const auto* value = Copier::CopyVar(&var);
+			const auto* value = new RE::BSScript::Variable(var);
 			array.push_back(value);
 		}
 
